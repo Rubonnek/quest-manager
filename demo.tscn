@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://dijjkn3l760ma"]
+
+[ext_resource type="Script" path="res://demo.gd" id="1_gy51k"]
+[ext_resource type="PackedScene" uid="uid://cmb22jkrhu3bo" path="res://quest_manager_viewer.tscn" id="1_x7xo5"]
+
+[node name="DemoControl" type="Control" node_paths=PackedStringArray("quest_manager_viewer_")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gy51k")
+quest_manager_viewer_ = NodePath("QuestManagerViewer")
+
+[node name="QuestManagerViewer" parent="." instance=ExtResource("1_x7xo5")]
+layout_mode = 1
