@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://bt2bj3rxt3jlr"]
+
+[ext_resource type="Script" path="res://demos/4. quest serialization/quest_serialization.gd" id="1_ghe3k"]
+
+[node name="Demo" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ghe3k")
+
+[node name="Instructions" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Running and closing this scene will update previous quest state and save it to disk."

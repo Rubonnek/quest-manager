@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://gojeien6c0ql"]
+
+[ext_resource type="Script" path="res://demos/3. quest state tracking/quest_state_tracking.gd" id="1_jwxm5"]
+
+[node name="Demo" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jwxm5")
+
+[node name="Instructions" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Run the scene and check the QuestManager tab in the debugger."

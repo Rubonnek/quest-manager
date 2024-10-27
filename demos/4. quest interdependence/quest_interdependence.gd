@@ -8,6 +8,9 @@ func _ready() -> void:
 	var quest : QuestEntry = main_quest_manager.add_quest("Main Quest", "Quest Description")
 	quest.set_metadata("data1", "value1")
 
+	var condition : Callable = func always_return_false() -> bool:
+		return true
+
 	var subquest : QuestEntry = quest.add_subquest("Main Subquest", "Main Subquest Description")
 	subquest.add_acceptance_condition(condition)
 	subquest.add_completion_condition(condition)
