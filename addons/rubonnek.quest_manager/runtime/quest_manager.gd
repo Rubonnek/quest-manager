@@ -44,12 +44,20 @@ extends RefCounted
 class_name QuestManager
 
 
+## Emitted when [method QuestEntry.set_active] is called.
+signal quest_activated(p_quest : QuestEntry)
+## Emitted when [method QuestEntry.set_inactive] is called.
+signal quest_deactivated(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_accepted] is called.
 signal quest_accepted(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_active] is called.
-signal quest_activation_changed(p_quest : QuestEntry)
+## Emitted when [method QuestEntry.set_rejected] is called.
+signal quest_rejected(p_quest : QuestEntry)
+## Emitted when [method QuestEntry.set_canceled] is called.
+signal quest_canceled(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_completed] is called.
 signal quest_completed(p_quest : QuestEntry)
+## Emitted when [method QuestEntry.set_failed] is called.
+signal quest_failed(p_quest : QuestEntry)
 
 var _m_quests : Array = []
 
@@ -88,8 +96,10 @@ func size() -> int:
 	return _m_quests.size()
 
 
-## Returns a number between 0 and 100 representing the percent of overall accepted and completed tasks.
-func get_progress() -> int:
+## Returns a number between 0 and 1 representing the percent of overall accepted and completed tasks.
+func get_progress() -> float:
+	if _m_quests.is_empty():
+		return 1.0
 	var total_steps : float = _m_quests.size() * 2
 	var steps_taken : float = 0
 	for quest_id : int in _m_quests:
@@ -99,10 +109,12 @@ func get_progress() -> int:
 			steps_taken += 1
 		if quest.is_completed():
 			steps_taken += 1
-	return int((steps_taken / total_steps) * 100)
+	return steps_taken / total_steps
 
 
-## Appends all the quests available in another QuestManager.
+## Appends all the quests available in another QuestManager.[br]
+## [br]
+## [color=yellow]Warning:[/color] Appending quests from a source quest manager will duplicate the quests data, meaning that updating any data in the source quest entry or quest manager won't automatically update the quest in both places at the same time.
 func append(p_quest_manager : QuestManager) -> void:
 	var id_offset : int = _m_quests.size()
 	_m_quests.append_array(p_quest_manager.get_data().duplicate(true))
@@ -129,6 +141,10 @@ func get_data() -> Array:
 ## Overwrites the quest manager data.
 func set_data(p_data : Array) -> void:
 	_m_quests = p_data
+	if EngineDebugger.is_active():
+		for quest_id : int in p_data.size():
+			var quest_entry : QuestEntry = get_quest(quest_id)
+			quest_entry.__send_entry_to_manager_viewer()
 
 
 ## Returns a duplicated quests array in a tree-like format with internal keys replaced with strings for easier reading/debugging.[br]
@@ -186,14 +202,34 @@ func _iter_get(_p_args : Variant) -> QuestEntry:
 	return get_quest(_m_iter_needle)
 # ==== ITERATOR ====
 
-func __quest_completed(p_quest_entry : QuestEntry) -> void:
-	quest_completed.emit(p_quest_entry)
 
-func __quest_activation_changed(p_quest_entry : QuestEntry) -> void:
-	quest_activation_changed.emit(p_quest_entry)
+func __quest_activated(p_quest_entry : QuestEntry) -> void:
+	quest_activated.emit(p_quest_entry)
+
+
+func __quest_deactivated(p_quest_entry : QuestEntry) -> void:
+	quest_deactivated.emit(p_quest_entry)
+
 
 func __quest_accepted(p_quest_entry : QuestEntry) -> void:
 	quest_accepted.emit(p_quest_entry)
+
+
+func __quest_rejected(p_quest_entry : QuestEntry) -> void:
+	quest_rejected.emit(p_quest_entry)
+
+
+func __quest_completed(p_quest_entry : QuestEntry) -> void:
+	quest_completed.emit(p_quest_entry)
+
+
+func __quest_failed(p_quest_entry : QuestEntry) -> void:
+	quest_failed.emit(p_quest_entry)
+
+
+func __quest_canceled(p_quest_entry : QuestEntry) -> void:
+	quest_canceled.emit(p_quest_entry)
+
 
 func _init() -> void:
 	if EngineDebugger.is_active():

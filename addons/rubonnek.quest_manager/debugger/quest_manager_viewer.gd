@@ -111,6 +111,22 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			__refresh_quest_entries_if_needed(stored_quest_manager)
 			return true
 
+		"quest_manager:sync_why_cant_be_rejected":
+			var quest_manager_id : int = p_data[0]
+			var meta_key : StringName = __generate_meta_key(quest_manager_id)
+			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
+			var remote_quest_entry_id : int = p_data[1]
+			var remote_reasons : Array = p_data[2]
+
+			# Inject the remote reasons as metadata within the QuestManager so that we can extract these later if required
+			var why_cant_be_rejected_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_rejected" % remote_quest_entry_id)
+			stored_quest_manager.set_meta(why_cant_be_rejected_meta_key, remote_reasons)
+
+			# Refresh the quest entries if needed:
+			__refresh_quest_entries_if_needed(stored_quest_manager)
+			return true
+
 		"quest_manager:sync_why_cant_be_completed":
 			var quest_manager_id : int = p_data[0]
 			var meta_key : StringName = __generate_meta_key(quest_manager_id)
@@ -127,6 +143,37 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			__refresh_quest_entries_if_needed(stored_quest_manager)
 			return true
 
+		"quest_manager:sync_why_cant_be_failed":
+			var quest_manager_id : int = p_data[0]
+			var meta_key : StringName = __generate_meta_key(quest_manager_id)
+			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
+			var remote_quest_entry_id : int = p_data[1]
+			var remote_reasons : Array = p_data[2]
+
+			# Inject the remote reasons as metadata within the QuestManager so that we can extract these later if required
+			var why_cant_be_failed_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_failed" % remote_quest_entry_id)
+			stored_quest_manager.set_meta(why_cant_be_failed_meta_key, remote_reasons)
+
+			# Refresh the quest entries if needed:
+			__refresh_quest_entries_if_needed(stored_quest_manager)
+			return true
+
+		"quest_manager:sync_why_cant_be_canceled":
+			var quest_manager_id : int = p_data[0]
+			var meta_key : StringName = __generate_meta_key(quest_manager_id)
+			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
+			var remote_quest_entry_id : int = p_data[1]
+			var remote_reasons : Array = p_data[2]
+
+			# Inject the remote reasons as metadata within the QuestManager so that we can extract these later if required
+			var why_cant_be_canceled_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_canceled" % remote_quest_entry_id)
+			stored_quest_manager.set_meta(why_cant_be_canceled_meta_key, remote_reasons)
+
+			# Refresh the quest entries if needed:
+			__refresh_quest_entries_if_needed(stored_quest_manager)
+			return true
 	push_warning("QuestManagerViewer: This should not happen. Unmanaged capture: %s %s" % [p_message, p_data])
 	return false
 
@@ -343,9 +390,13 @@ func __on_quest_view_selection_item_selected() -> void:
 		# Update the data view
 		var data_view : String = ""
 		data_view += "ID: %d\n" % quest_id
-		data_view += "Is Active: %s\n" % str(quest.is_active())
+		data_view += "\n"
+		data_view += "Is Active: %s\n" % quest.is_active()
+		data_view += "Activation Count: %d\n" % quest.get_activation_count()
+		data_view += "Inactivation Count: %d\n" % quest.get_inactivation_count()
+		data_view += "\n"
 
-		data_view += "Is Accepted: %s\n" % str(quest.is_accepted())
+		data_view += "Is Accepted: %s\n" % quest.is_accepted()
 		var why_cant_be_accepted_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_accepted" % quest_id)
 		var not_accepted_reasons : Array = quest_manager.get_meta(why_cant_be_accepted_meta_key, [])
 		data_view += "Can Be Accepted: %s\n" % str(not_accepted_reasons.is_empty())
@@ -355,6 +406,19 @@ func __on_quest_view_selection_item_selected() -> void:
 		if not not_accepted_reasons.is_empty():
 			data_view += "Why can't be accepted?: %s\n" % JSON.stringify(not_accepted_reasons, "\t").strip_edges(true,true)
 		data_view += "Acceptance Count: %s\n" % str(quest.get_acceptance_count())
+		data_view += "\n"
+
+		data_view += "Is Rejected: %s\n" % str(quest.is_rejected())
+		var why_cant_be_rejected_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_rejected" % quest_id)
+		var not_rejected_reasons : Array = quest_manager.get_meta(why_cant_be_rejected_meta_key, [])
+		data_view += "Can Be Rejected: %s\n" % str(not_rejected_reasons.is_empty())
+		var rejection_conditions : Array = quest.__get_rejection_conditions()
+		if not rejection_conditions.is_empty():
+			data_view += "Acceptance Conditions: %s\n" % JSON.stringify(rejection_conditions, "\t").strip_edges(true,true)
+		if not not_rejected_reasons.is_empty():
+			data_view += "Why can't be rejected?: %s\n" % JSON.stringify(not_rejected_reasons, "\t").strip_edges(true,true)
+		data_view += "Acceptance Count: %s\n" % str(quest.get_rejection_count())
+		data_view += "\n"
 
 		data_view += "Is Completed: %s\n" % str(quest.is_completed())
 		var why_cant_be_completed_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_completed" % quest_id)
@@ -366,9 +430,32 @@ func __on_quest_view_selection_item_selected() -> void:
 		if not not_completed_reasons.is_empty():
 			data_view += "Why can't be completed?: %s\n" % JSON.stringify(not_completed_reasons, "\t").strip_edges(true,true)
 		data_view += "Completion Count: %s\n" % str(quest.get_completion_count())
+		data_view += "\n"
 
+		data_view += "Is Failed: %s\n" % str(quest.is_failed())
+		var why_cant_be_failed_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_failed" % quest_id)
+		var not_failed_reasons : Array = quest_manager.get_meta(why_cant_be_failed_meta_key, [])
+		data_view += "Can Be Failed: %s\n" % str(not_failed_reasons.is_empty())
+		var failure_conditions : Array = quest.__get_failure_conditions()
+		if not failure_conditions.is_empty():
+			data_view += "Failure Conditions: %s\n" % JSON.stringify(failure_conditions, "\t").strip_edges(true,true)
+		if not not_failed_reasons.is_empty():
+			data_view += "Why can't be failed?: %s\n" % JSON.stringify(not_failed_reasons, "\t").strip_edges(true,true)
+		data_view += "Failure Count: %s\n" % str(quest.get_failure_count())
+		data_view += "\n"
 
-		quest_manager_viewer_quest_data_view_text_edit_.set_text(data_view)
+		data_view += "Is Canceled: %s\n" % str(quest.is_canceled())
+		var why_cant_be_canceled_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_canceled" % quest_id)
+		var not_canceled_reasons : Array = quest_manager.get_meta(why_cant_be_canceled_meta_key, [])
+		data_view += "Can Be Canceled: %s\n" % str(not_canceled_reasons.is_empty())
+		var cancelation_conditions : Array = quest.__get_cancelation_conditions()
+		if not cancelation_conditions.is_empty():
+			data_view += "Cancelation Conditions: %s\n" % JSON.stringify(cancelation_conditions, "\t").strip_edges(true,true)
+		if not not_canceled_reasons.is_empty():
+			data_view += "Why can't be canceled?: %s\n" % JSON.stringify(not_canceled_reasons, "\t").strip_edges(true,true)
+		data_view += "Cancelation Count: %s\n" % str(quest.get_cancelation_count())
+
+		quest_manager_viewer_quest_data_view_text_edit_.set_text(data_view.strip_edges(true,true))
 
 		# Update the metadata view
 		if not quest.has_metadata():

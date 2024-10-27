@@ -38,18 +38,36 @@ var _m_quest_entry_dictionary : Dictionary
 var _m_quest_entry_dictionary_id : int
 var _m_quest_manager : QuestManager = null
 
-
 enum _key {
 	TITLE,
 	DESCRIPTION,
-	ACCEPTANCE_CONDITIONS,
-	ACCEPTANCE_COUNT,
-	COMPLETION_CONDITIONS,
-	COMPLETION_COUNT,
-	IS_ACTIVE,
 	PARENT_QUEST_ID,
 	SUBQUESTS_IDS,
 	METADATA,
+
+	IS_ACTIVE,
+	ACTIVATION_COUNT,
+	INACTIVATION_COUNT,
+
+	IS_ACCEPTED,
+	ACCEPTANCE_COUNT,
+	ACCEPTANCE_CONDITIONS,
+
+	IS_REJECTED,
+	REJECTION_COUNT,
+	REJECTION_CONDITIONS,
+
+	IS_COMPLETED,
+	COMPLETION_COUNT,
+	COMPLETION_CONDITIONS,
+
+	IS_FAILED,
+	FAILURE_COUNT,
+	FAILURE_CONDITIONS,
+
+	IS_CANCELED,
+	CANCELATION_COUNT,
+	CANCELATION_CONDITIONS,
 }
 
 
@@ -119,6 +137,22 @@ func are_subquests_completed() -> bool:
 	return true
 
 
+## Returns true if all the subquests are failed.
+func are_subquests_failed() -> bool:
+	if not has_subquests():
+		return true
+
+	var quest_id_stack : Array = get_subquests_ids()
+	while not quest_id_stack.is_empty():
+		var quest_id : int = quest_id_stack.pop_back()
+		var quest : QuestEntry = _m_quest_manager.get_quest(quest_id)
+		if not quest.is_failed():
+			return false
+		if quest.has_subquests():
+			quest_id_stack.append_array(quest.get_subquests_ids())
+	return true
+
+
 ## Returns true if all the subquests are accepted.
 func are_subquests_accepted() -> bool:
 	if not has_subquests():
@@ -129,6 +163,22 @@ func are_subquests_accepted() -> bool:
 		var quest_id : int = quest_id_stack.pop_back()
 		var quest : QuestEntry = _m_quest_manager.get_quest(quest_id)
 		if not quest.is_accepted():
+			return false
+		if quest.has_subquests():
+			quest_id_stack.append_array(quest.get_subquests_ids())
+	return true
+
+
+## Returns true if all the subquests are rejected.
+func are_subquests_rejected() -> bool:
+	if not has_subquests():
+		return true
+
+	var quest_id_stack : Array = get_subquests_ids()
+	while not quest_id_stack.is_empty():
+		var quest_id : int = quest_id_stack.pop_back()
+		var quest : QuestEntry = _m_quest_manager.get_quest(quest_id)
+		if not quest.is_rejected():
 			return false
 		if quest.has_subquests():
 			quest_id_stack.append_array(quest.get_subquests_ids())
@@ -185,7 +235,7 @@ func add_completion_condition(p_condition : Callable) -> void:
 
 # Returns a reference to the internal quest completion conditions
 func __get_completion_conditions() -> Array:
-	var completion_conditions_array : Array = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_CONDITIONS, [])
+	var completion_conditions_array : Array = _m_quest_entry_dictionary.get(_key.COMPLETION_CONDITIONS, [])
 	return completion_conditions_array
 
 
@@ -234,6 +284,7 @@ func clear_completion_conditions() -> void:
 
 ## Sets the quest as completed by increasing an internal quest completion count by 1. This function will emit [signal QuestManager.quest_completed].
 func set_completed() -> void:
+	_m_quest_entry_dictionary[_key.IS_COMPLETED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.COMPLETION_COUNT, 0) + 1
 	_m_quest_entry_dictionary[_key.COMPLETION_COUNT] = count
 	_m_quest_manager.__quest_completed(self)
@@ -242,13 +293,173 @@ func set_completed() -> void:
 
 ## Returns true if the quest completion count is greater than 0. See [method set_completed].
 func is_completed() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.COMPLETION_COUNT, 0) > 0
+	var status : bool = _m_quest_entry_dictionary.get(_key.IS_COMPLETED, false)
 	return status
 
 
 ## Returns the number of times the quest has been completed.
 func get_completion_count() -> int:
 	var count : int = _m_quest_entry_dictionary.get(_key.COMPLETION_COUNT, 0)
+	return count
+
+
+## Adds a boolean-returning [Callable] as a failure condition
+func add_failure_condition(p_condition : Callable) -> void:
+	var failure_conditions_array : Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
+	if  not _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS):
+		_m_quest_entry_dictionary[_key.FAILURE_CONDITIONS] = failure_conditions_array
+	failure_conditions_array.push_back(p_condition)
+	__send_entry_to_manager_viewer()
+	__sync_why_cant_be_failed_with_debugger()
+
+
+# Returns a reference to the internal quest failure conditions
+func __get_failure_conditions() -> Array:
+	var failure_conditions_array : Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
+	return failure_conditions_array
+
+
+## Returns true if all the failure conditions return true. Returns false otherwise.
+func can_be_failed() -> bool:
+	if not _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS):
+		return true
+	var failure_conditions_array : Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
+	for condition : Callable in failure_conditions_array:
+		if condition.is_valid():
+			if not condition.call():
+				__sync_why_cant_be_failed_with_debugger()
+				return false
+		else:
+			__sync_why_cant_be_failed_with_debugger()
+			condition.call() # call the Callable anyway even when invalid to let it error out and notify the developer
+			return false
+	return true
+
+
+# Sends an array of the failure conditions that returned false to the debugger. Only executed when can_be_failed is called and EngineDebugger is active.
+func __sync_why_cant_be_failed_with_debugger() -> void:
+	if EngineDebugger.is_active():
+		var reasons : Array[String] = []
+		if not _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS):
+			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_failed", reasons)
+		var failure_conditions_array : Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
+		for condition : Callable in failure_conditions_array:
+			if not condition.is_valid():
+				reasons.push_back(str(condition) + ": is an invalid Callable")
+			elif condition.is_valid() and not condition.call():
+				reasons.push_back(str(condition) + ": returns false")
+		__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_failed", reasons)
+
+
+## Returns true if there's at least one failure condition installed. False otherwise.
+func has_failure_conditions() -> bool:
+	return _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS)
+
+
+## Clears all the failure conditions
+func clear_failure_conditions() -> void:
+	var _success : bool = _m_quest_entry_dictionary.erase(_key.FAILURE_CONDITIONS)
+	__send_entry_to_manager_viewer()
+
+
+## Sets the quest as failed by increasing an internal quest failure count by 1. This function will emit [signal QuestManager.quest_failed].
+func set_failed() -> void:
+	_m_quest_entry_dictionary[_key.IS_FAILED] = true
+	var count : int = _m_quest_entry_dictionary.get(_key.FAILURE_COUNT, 0) + 1
+	_m_quest_entry_dictionary[_key.FAILURE_COUNT] = count
+	_m_quest_manager.__quest_failed(self)
+	__send_entry_to_manager_viewer()
+
+
+## Returns true if the quest failure count is greater than 0. See [method set_failed].
+func is_failed() -> bool:
+	var status : bool = _m_quest_entry_dictionary.get(_key.IS_FAILED, false)
+	return status
+
+
+## Returns the number of times the quest has been failed.
+func get_failure_count() -> int:
+	var count : int = _m_quest_entry_dictionary.get(_key.FAILURE_COUNT, 0)
+	return count
+
+
+## Adds a boolean-returning [Callable] as a cancelation condition
+func add_cancelation_condition(p_condition : Callable) -> void:
+	var cancelation_conditions_array : Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
+	if  not _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS):
+		_m_quest_entry_dictionary[_key.CANCELATION_CONDITIONS] = cancelation_conditions_array
+	cancelation_conditions_array.push_back(p_condition)
+	__send_entry_to_manager_viewer()
+	__sync_why_cant_be_canceled_with_debugger()
+
+
+# Returns a reference to the internal quest cancelation conditions
+func __get_cancelation_conditions() -> Array:
+	var cancelation_conditions_array : Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
+	return cancelation_conditions_array
+
+
+## Returns true if all the cancelation conditions return true. Returns false otherwise.
+func can_be_canceled() -> bool:
+	if not _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS):
+		return true
+	var cancelation_conditions_array : Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
+	for condition : Callable in cancelation_conditions_array:
+		if condition.is_valid():
+			if not condition.call():
+				__sync_why_cant_be_canceled_with_debugger()
+				return false
+		else:
+			__sync_why_cant_be_canceled_with_debugger()
+			condition.call() # call the Callable anyway even when invalid to let it error out and notify the developer
+			return false
+	return true
+
+
+# Sends an array of the cancelation conditions that returned false to the debugger. Only executed when can_be_canceled is called and EngineDebugger is active.
+func __sync_why_cant_be_canceled_with_debugger() -> void:
+	if EngineDebugger.is_active():
+		var reasons : Array[String] = []
+		if not _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS):
+			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_canceled", reasons)
+		var cancelation_conditions_array : Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
+		for condition : Callable in cancelation_conditions_array:
+			if not condition.is_valid():
+				reasons.push_back(str(condition) + ": is an invalid Callable")
+			elif condition.is_valid() and not condition.call():
+				reasons.push_back(str(condition) + ": returns false")
+		__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_canceled", reasons)
+
+
+## Returns true if there's at least one cancelation condition installed. False otherwise.
+func has_cancelation_conditions() -> bool:
+	return _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS)
+
+
+## Clears all the cancelation conditions
+func clear_cancelation_conditions() -> void:
+	var _success : bool = _m_quest_entry_dictionary.erase(_key.CANCELATION_CONDITIONS)
+	__send_entry_to_manager_viewer()
+
+
+## Sets the quest as canceled by increasing an internal quest cancelation count by 1. This function will emit [signal QuestManager.quest_canceled].
+func set_canceled() -> void:
+	_m_quest_entry_dictionary[_key.IS_CANCELED] = true
+	var count : int = _m_quest_entry_dictionary.get(_key.CANCELATION_COUNT, 0) + 1
+	_m_quest_entry_dictionary[_key.CANCELATION_COUNT] = count
+	_m_quest_manager.__quest_canceled(self)
+	__send_entry_to_manager_viewer()
+
+
+## Returns true if the quest cancelation count is greater than 0. See [method set_canceled].
+func is_canceled() -> bool:
+	var status : bool = _m_quest_entry_dictionary.get(_key.IS_CANCELED, false)
+	return status
+
+
+## Returns the number of times the quest has been canceled.
+func get_cancelation_count() -> int:
+	var count : int = _m_quest_entry_dictionary.get(_key.CANCELATION_COUNT, 0)
 	return count
 
 
@@ -314,6 +525,7 @@ func clear_acceptance_conditions() -> void:
 
 ## Sets the quest as accepted by increasing an internal quest acceptance count by 1. This function will emit [signal QuestManager.quest_accepted].
 func set_accepted() -> void:
+	_m_quest_entry_dictionary[_key.IS_ACCEPTED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0) + 1
 	_m_quest_entry_dictionary[_key.ACCEPTANCE_COUNT] = count
 	_m_quest_manager.__quest_accepted(self)
@@ -322,7 +534,7 @@ func set_accepted() -> void:
 
 ## Returns true if the quest acceptance count is greater than 0. See [method set_accepted].
 func is_accepted() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0) > 0
+	var status : bool = _m_quest_entry_dictionary.get(_key.IS_ACCEPTED, false)
 	return status
 
 
@@ -331,19 +543,109 @@ func get_acceptance_count() -> int:
 	var count : int = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0)
 	return count
 
+## Adds a boolean-returning [Callable] as a rejection condition
+func add_rejection_condition(p_condition : Callable) -> void:
+	var rejection_conditions_array : Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
+	if  not _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS):
+		_m_quest_entry_dictionary[_key.REJECTION_CONDITIONS] = rejection_conditions_array
+	rejection_conditions_array.push_back(p_condition)
+	__send_entry_to_manager_viewer()
+	__sync_why_cant_be_rejected_with_debugger()
+
+
+# Returns a reference to the internal quest rejection conditions
+func __get_rejection_conditions() -> Array:
+	var rejection_conditions_array : Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
+	return rejection_conditions_array
+
+
+## Returns true if all the rejection conditions return true. Returns false otherwise.
+func can_be_rejected() -> bool:
+	if not _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS):
+		return true
+	var rejection_conditions_array : Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
+	for condition : Callable in rejection_conditions_array:
+		if condition.is_valid():
+			if not condition.call():
+				__sync_why_cant_be_rejected_with_debugger()
+				return false
+		else:
+			__sync_why_cant_be_rejected_with_debugger()
+			condition.call() # call the Callable anyway even when invalid to let it error out and notify the developer
+			return false
+	return true
+
+
+# Sends an array of the rejection conditions that returned false to the debugger. Only executed when can_be_rejected is called and EngineDebugger is active.
+func __sync_why_cant_be_rejected_with_debugger() -> void:
+	if EngineDebugger.is_active():
+		var reasons : Array[String] = []
+		if not _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS):
+			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_rejected", reasons)
+			return
+		var rejection_conditions_array : Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
+		for condition : Callable in rejection_conditions_array:
+			if not condition.is_valid():
+				reasons.push_back(str(condition) + ": is an invalid Callable")
+			elif condition.is_valid() and not condition.call():
+				reasons.push_back(str(condition) + ": returns false")
+		__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_rejected", reasons)
+
+
+## Returns true if there's at least one rejection condition installed. False otherwise.
+func has_rejection_conditions() -> bool:
+	return _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS)
+
+
+## Clears all the rejection conditions
+func clear_rejection_conditions() -> void:
+	var _success : bool = _m_quest_entry_dictionary.erase(_key.REJECTION_CONDITIONS)
+	__send_entry_to_manager_viewer()
+
+
+## Sets the quest as rejected by increasing an internal quest rejection count by 1. This function will emit [signal QuestManager.quest_rejected].
+func set_rejected() -> void:
+	_m_quest_entry_dictionary[_key.IS_REJECTED] = true
+	var count : int = _m_quest_entry_dictionary.get(_key.REJECTION_COUNT, 0) + 1
+	_m_quest_entry_dictionary[_key.REJECTION_COUNT] = count
+	_m_quest_manager.__quest_rejected(self)
+	__send_entry_to_manager_viewer()
+
+
+## Returns true if the quest rejection count is greater than 0. See [method set_rejected].
+func is_rejected() -> bool:
+	var status : bool = _m_quest_entry_dictionary.get(_key.IS_REJECTED, false)
+	return status
+
+
+## Returns the number of times the quest has been rejected.
+func get_rejection_count() -> int:
+	var count : int = _m_quest_entry_dictionary.get(_key.REJECTION_COUNT, 0)
+	return count
+
 
 ## Sets the quest as active.
-func set_active(p_should_activate : bool = true) -> void:
-	if p_should_activate:
-		_m_quest_entry_dictionary[_key.IS_ACTIVE] = true
-	else:
-		var _ignore : bool = _m_quest_entry_dictionary.erase(_key.IS_ACTIVE)
-	_m_quest_manager.__quest_activation_changed(self)
+func set_active() -> void:
+	var count : int = _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0) + 1
+	_m_quest_entry_dictionary[_key.ACTIVATION_COUNT] = count
+	_m_quest_entry_dictionary[_key.IS_ACTIVE] = true
+	_m_quest_manager.__quest_activated(self)
+
+
+func get_activation_count() -> int:
+	return _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0)
 
 
 ## Sets the quest as inactive.
 func set_inactive() -> void:
-	set_active(false)
+	var count : int = _m_quest_entry_dictionary.get(_key.INACTIVATION_COUNT, 0) + 1
+	_m_quest_entry_dictionary[_key.INACTIVATION_COUNT] = count
+	var _ignore : bool = _m_quest_entry_dictionary.erase(_key.IS_ACTIVE)
+	_m_quest_manager.__quest_deactivated(self)
+
+
+func get_inactivation_count() -> int:
+	return _m_quest_entry_dictionary.get(_key.INACTIVATION_COUNT, 0)
 
 
 ## Returns true if the quest is active.
