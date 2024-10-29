@@ -58,6 +58,8 @@ signal quest_canceled(p_quest : QuestEntry)
 signal quest_completed(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_failed] is called.
 signal quest_failed(p_quest : QuestEntry)
+## Emitted when a quest is updated.
+signal quest_updated(p_quest : QuestEntry)
 
 var _m_quests : Array = []
 
@@ -241,6 +243,10 @@ func __quest_failed(p_quest_entry : QuestEntry) -> void:
 
 func __quest_canceled(p_quest_entry : QuestEntry) -> void:
 	quest_canceled.emit(p_quest_entry)
+
+
+func __quest_updated(p_quest_entry : QuestEntry) -> void:
+	quest_updated.emit(p_quest_entry)
 
 
 func _init() -> void:

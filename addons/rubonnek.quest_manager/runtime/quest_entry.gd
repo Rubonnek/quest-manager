@@ -817,6 +817,10 @@ func __send_entry_to_manager_viewer() -> void:
 		EngineDebugger.send_message("quest_manager:sync_entry", [quest_manager_id, _m_quest_entry_dictionary_id, duplicated_quest_entry_data])
 
 
+func set_updated() -> void:
+	_m_quest_manager.__quest_updated(self)
+
+
 func _init(p_quest_entry_dictionary_id : int, p_quest_manager : QuestManager, p_quest_entry_dictionary : Dictionary = {}, p_title : String = "", p_description : String = "") -> void:
 	_m_quest_entry_dictionary_id  = p_quest_entry_dictionary_id
 	_m_quest_entry_dictionary = p_quest_entry_dictionary
