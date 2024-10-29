@@ -47,7 +47,7 @@ class_name QuestManager
 ## Emitted when [method QuestEntry.set_active] is called.
 signal quest_activated(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_inactive] is called.
-signal quest_deactivated(p_quest : QuestEntry)
+signal quest_inactivated(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_accepted] is called.
 signal quest_accepted(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_rejected] is called.
@@ -58,7 +58,7 @@ signal quest_canceled(p_quest : QuestEntry)
 signal quest_completed(p_quest : QuestEntry)
 ## Emitted when [method QuestEntry.set_failed] is called.
 signal quest_failed(p_quest : QuestEntry)
-## Emitted when a quest is updated.
+## Emitted when [method QuestEntry.set_updated] is called.
 signal quest_updated(p_quest : QuestEntry)
 
 var _m_quests : Array = []
@@ -221,8 +221,8 @@ func __quest_activated(p_quest_entry : QuestEntry) -> void:
 	quest_activated.emit(p_quest_entry)
 
 
-func __quest_deactivated(p_quest_entry : QuestEntry) -> void:
-	quest_deactivated.emit(p_quest_entry)
+func __quest_inactivated(p_quest_entry : QuestEntry) -> void:
+	quest_inactivated.emit(p_quest_entry)
 
 
 func __quest_accepted(p_quest_entry : QuestEntry) -> void:
