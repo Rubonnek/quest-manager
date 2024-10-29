@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bi25jubhhpbfo"]
 
-[ext_resource type="Script" path="res://demos/1. simple quest/simple_quest.gd" id="1_gy51k"]
+[ext_resource type="Script" path="res://demos/4. quest interdependence/quest_interdependence.gd" id="1_6ay1c"]
 
 [node name="Demo" type="PanelContainer"]
 anchors_preset = 15
@@ -8,7 +8,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_gy51k")
+script = ExtResource("1_6ay1c")
 
 [node name="Instructions" type="Label" parent="."]
 layout_mode = 2

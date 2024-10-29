@@ -5,15 +5,18 @@ var quest_manager : QuestManager = QuestManager.new()
 func _ready() -> void:
 	var quest : QuestEntry = quest_manager.add_quest("Main Quest", "Main Quest Description")
 
-	# There are six independent states that can be actively tracked.
+	# There's built-in support for quests to be active/inactive
 	quest.set_active()
 	quest.set_inactive()
 
-	quest.set_completed()
-	quest.set_failed()
-
+	# Accepted or rejected
 	quest.set_accepted()
 	quest.set_rejected()
 
-	# And you can also add your own metadata to each quest
+	# Completed, failed or cancelled
+	quest.set_completed()
+	quest.set_failed()
+	quest.set_canceled()
+
+	# As well as your own metadata
 	quest.set_metadata("some_key", "some_value")

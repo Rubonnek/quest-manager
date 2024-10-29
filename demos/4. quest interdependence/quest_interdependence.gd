@@ -4,8 +4,8 @@ extends Control
 
 func _ready() -> void:
 	var quest_manager : QuestManager = QuestManager.new()
-	var main_quest : QuestEntry = quest_manager.add_quest()
-	var main_subquest : QuestEntry = main_quest.add_subquest()
+	var quest : QuestEntry = quest_manager.add_quest("Quest")
+	var subquest : QuestEntry = quest.add_subquest("Subquest")
 
 	# Quest interdependence has been implemented as an array of boolean-returning callables.
 	# Each of these callables can be installed to test whether a quest:
@@ -21,9 +21,14 @@ func _ready() -> void:
 	var contradiction : Callable = func contradiction() -> bool:
 		return false
 
-	# When a condition fails, the debugger will show which condition is returning either false or can't be evaluated because it's Callable isn't valid.
-	main_subquest.add_acceptance_condition(tautology)
-	main_subquest.add_completion_condition(contradiction)
-	main_subquest.add_rejection_condition(contradiction)
-	main_subquest.add_failure_condition(contradiction)
-	main_subquest.add_cancelation_condition(contradiction)
+	subquest.add_acceptance_condition(tautology)
+	subquest.add_completion_condition(contradiction)
+	subquest.add_rejection_condition(contradiction)
+	subquest.add_failure_condition(contradiction)
+	subquest.add_cancelation_condition(contradiction)
+
+	# There are also helper functions for testing the states of all the subquests.
+	# For example:
+	quest.are_subquests_completed()
+	# Which can be used as a completion condition:
+	quest.add_completion_condition(quest.are_subquests_completed)
