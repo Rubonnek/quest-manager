@@ -11,7 +11,7 @@ func _ready() -> void:
 		config_file.load(save_path)
 		var data : Array = config_file.get_value("quest_manager", "data")
 		quest_manager.set_data(data)
-		quest_id = config_file.get_value("quest_ids", "first_quest")
+		quest_id = config_file.get_value("quest_manager", "first_quest")
 	else:
 		quest_id = quest_manager.add_quest("Counters Keep Going UP", "Keep launching this scene to see the counters going up").get_id()
 
@@ -36,9 +36,12 @@ func _ready() -> void:
 	print("Failure Count: ", quest.get_failure_count())
 	print("Cancelation Count: ", quest.get_cancelation_count())
 
-	config_file.set_value("quest_ids", "first_quest", quest_id)
+	# Make sure to keep track of each quest entry ID.
+	# QuestEntry objects are meant to be ephemeral since they do not hold any data within themselves.
+	# All the data is stored in QuestManager.
+	config_file.set_value("quest_manager", "first_quest", quest_id)
 
 	# WARNING: On an actual project you might want to clear the quest conditions before saving the quest to disk and reinstall those conditions at runtime after loading the data from disk.
-	# quest_manager.clear_conditions() # can also be called to clear the conditions of all the quests.
+	# quest_manager.clear_conditions() can also be called to clear the conditions of all the quests before saving its data.
 	config_file.set_value("quest_manager","data", quest_manager.get_data())
 	config_file.save(save_path)
