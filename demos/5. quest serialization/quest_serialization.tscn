@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bt2bj3rxt3jlr"]
 
-[ext_resource type="Script" path="res://demos/4. quest serialization/quest_serialization.gd" id="1_ghe3k"]
+[ext_resource type="Script" path="res://demos/5. quest serialization/quest_serialization.gd" id="1_ghe3k"]
 
 [node name="Demo" type="PanelContainer"]
 anchors_preset = 15

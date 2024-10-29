@@ -37,5 +37,8 @@ func _ready() -> void:
 	print("Cancelation Count: ", quest.get_cancelation_count())
 
 	config_file.set_value("quest_ids", "first_quest", quest_id)
+
+	# WARNING: On an actual project you might want to clear the quest conditions before saving the quest to disk and reinstall those conditions at runtime after loading the data from disk.
+	# quest_manager.clear_conditions() # can also be called to clear the conditions of all the quests.
 	config_file.set_value("quest_manager","data", quest_manager.get_data())
 	config_file.save(save_path)
