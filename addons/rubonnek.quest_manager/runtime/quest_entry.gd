@@ -789,14 +789,16 @@ func __send_entry_to_manager_viewer() -> void:
 		var duplicated_quest_entry_data : Dictionary = get_data().duplicate(true)
 
 		# Stringify all the callables
-		var duplicated_acceptance_conditions_array : Array = duplicated_quest_entry_data.get(_key.ACCEPTANCE_CONDITIONS, [])
-		for index : int in duplicated_acceptance_conditions_array.size():
-			var callable : Callable = duplicated_acceptance_conditions_array[index]
-			duplicated_acceptance_conditions_array[index] = str(callable)
-		var duplicated_completion_conditions_array : Array = duplicated_quest_entry_data.get(_key.COMPLETION_CONDITIONS, [])
-		for index : int in duplicated_completion_conditions_array.size():
-			var callable : Callable = duplicated_completion_conditions_array[index]
-			duplicated_completion_conditions_array[index] = str(callable)
+		var stringify_callables_and_install_in_duplicated_entry_data : Callable = func (p_key : int) -> void:
+			var duplicated_acceptance_conditions_array : Array = duplicated_quest_entry_data.get(p_key, [])
+			for index : int in duplicated_acceptance_conditions_array.size():
+				var callable : Callable = duplicated_acceptance_conditions_array[index]
+				duplicated_acceptance_conditions_array[index] = str(callable)
+		stringify_callables_and_install_in_duplicated_entry_data.call(_key.ACCEPTANCE_CONDITIONS)
+		stringify_callables_and_install_in_duplicated_entry_data.call(_key.REJECTION_CONDITIONS)
+		stringify_callables_and_install_in_duplicated_entry_data.call(_key.COMPLETION_CONDITIONS)
+		stringify_callables_and_install_in_duplicated_entry_data.call(_key.FAILURE_CONDITIONS)
+		stringify_callables_and_install_in_duplicated_entry_data.call(_key.CANCELATION_CONDITIONS)
 
 		# Stringify all the metadata keys and values where needed to display them in text form in the viewer
 		var metadata : Dictionary = _m_quest_entry_dictionary.get(_key.METADATA, {})
