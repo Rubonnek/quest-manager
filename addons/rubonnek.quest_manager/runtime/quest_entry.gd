@@ -104,18 +104,18 @@ func get_subquest(p_subquest_id : int) -> QuestEntry:
 	return _m_quest_manager.get_quest(p_subquest_id)
 
 
-## Returns true if the quest has any subquests
+## Returns true if the quest has any subquests.
 func has_subquests() -> bool:
 	return _m_quest_entry_dictionary.has(_key.SUBQUESTS_IDS)
 
 
-## Returns an array of internal subquest IDs.
+## Returns an array containing the subquest IDs.
 func get_subquests_ids() -> Array:
 	var subquests_ids : Array =  _m_quest_entry_dictionary.get(_key.SUBQUESTS_IDS, [])
 	return subquests_ids.duplicate(true)
 
 
-# Returns a reference to the array of internal subquest IDs. Used in [method QuestManager.append].
+# Returns a reference to the array of internal subquest IDs. Used in [method QuestManager.append] -- needed for updating the subquest IDs within that function.
 func __get_subquests_ids() -> Array:
 	var subquests_ids : Array =  _m_quest_entry_dictionary.get(_key.SUBQUESTS_IDS, [])
 	return subquests_ids
@@ -185,7 +185,7 @@ func are_subquests_rejected() -> bool:
 	return true
 
 
-## Sets the Quest title
+## Sets the quest title.
 func set_title(p_title : String) -> void:
 	if p_title.is_empty():
 		var _success : bool = _m_quest_entry_dictionary.erase(_key.TITLE)
@@ -194,17 +194,17 @@ func set_title(p_title : String) -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the Quest title
+## Returns the quest title.
 func get_title() -> String:
 	return _m_quest_entry_dictionary.get(_key.TITLE, "")
 
 
-## Sets the Quest title
+## Returns true if the quest has a title.
 func has_title() -> bool:
 	return _m_quest_entry_dictionary.has(_key.TITLE)
 
 
-## Sets the Quest description
+## Sets the quest description.
 func set_description(p_description : String) -> void:
 	if p_description.is_empty():
 		var _success : bool = _m_quest_entry_dictionary.erase(_key.DESCRIPTION)
@@ -213,12 +213,12 @@ func set_description(p_description : String) -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the Quest description
+## Returns the quest description.
 func get_description() -> String:
 	return _m_quest_entry_dictionary.get(_key.DESCRIPTION, "")
 
 
-## Sets the Quest title
+## Returns true if the quest has a description.
 func has_description() -> bool:
 	return _m_quest_entry_dictionary.has(_key.DESCRIPTION)
 
