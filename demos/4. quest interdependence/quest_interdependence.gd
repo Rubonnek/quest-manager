@@ -3,23 +3,27 @@ extends Control
 @export var quest_manager_viewer_ : Control
 
 func _ready() -> void:
-	# Single Quest
-	var main_quest_manager : QuestManager = QuestManager.new()
-	var quest : QuestEntry = main_quest_manager.add_quest("Main Quest", "Quest Description")
-	quest.set_metadata("data1", "value1")
+	var quest_manager : QuestManager = QuestManager.new()
+	var main_quest : QuestEntry = quest_manager.add_quest()
+	var main_subquest : QuestEntry = main_quest.add_subquest()
 
-	var condition : Callable = func always_return_false() -> bool:
+	# Quest interdependence has been implemented as an array of boolean-returning callables.
+	# Each of these callables can be installed to test whether a quest:
+	# * can be accepted
+	# * can be rejected
+	# * can be completed
+	# * can be failed
+	# * can be canceled
+
+	var tautology : Callable = func tautology() -> bool:
 		return true
 
-	var subquest : QuestEntry = quest.add_subquest("Main Subquest", "Main Subquest Description")
-	subquest.add_acceptance_condition(condition)
-	subquest.add_completion_condition(condition)
-	subquest.set_metadata("subdata1", "subvalue1")
-	subquest.set_accepted()
-	subquest.set_completed()
-	main_quest_manager.set_name("Main") # Used to identify the manager in the debugger
+	var contradiction : Callable = func contradiction() -> bool:
+		return false
 
-	var secondary_quest_manager : QuestManager = QuestManager.new()
-	var secondary_quest : QuestEntry = secondary_quest_manager.add_quest("Secondary Quest Line", "Description")
-	var _subquest : QuestEntry = secondary_quest.add_subquest("Subquest", "Description")
-	secondary_quest_manager.set_name("Secondary")
+	# When a condition fails, the debugger will show which condition is returning either false or can't be evaluated because it's Callable isn't valid.
+	main_subquest.add_acceptance_condition(tautology)
+	main_subquest.add_completion_condition(contradiction)
+	main_subquest.add_rejection_condition(contradiction)
+	main_subquest.add_failure_condition(contradiction)
+	main_subquest.add_cancelation_condition(contradiction)
