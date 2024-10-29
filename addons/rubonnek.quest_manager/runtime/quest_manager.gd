@@ -133,6 +133,18 @@ func append(p_quest_manager : QuestManager) -> void:
 		quest_entry.__send_entry_to_manager_viewer()
 
 
+## Clears every condition from every quest entry. Useful when saving quests to disk since some conditions may become invalid upon loading.
+func clear_conditions() -> void:
+	for index : int in _m_quests.size():
+		# Clear all the conditions
+		var quest_entry : QuestEntry = get_quest(index)
+		quest_entry.clear_acceptance_conditions()
+		quest_entry.clear_rejection_conditions()
+		quest_entry.clear_completion_conditions()
+		quest_entry.clear_failure_conditions()
+		quest_entry.clear_cancelation_conditions()
+
+
 ## Returns a reference to the internal data.
 func get_data() -> Array:
 	return _m_quests
