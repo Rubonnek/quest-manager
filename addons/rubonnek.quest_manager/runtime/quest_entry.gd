@@ -233,8 +233,8 @@ func add_completion_condition(p_condition : Callable) -> void:
 	__sync_why_cant_be_completed_with_debugger()
 
 
-# Returns a reference to the internal quest completion conditions
-func __get_completion_conditions() -> Array:
+## Returns a reference to the internal quest completion conditions. Modifying this array will directly modify the data of the quest entry. Use with caution.
+func get_completion_conditions() -> Array:
 	var completion_conditions_array : Array = _m_quest_entry_dictionary.get(_key.COMPLETION_CONDITIONS, [])
 	return completion_conditions_array
 
@@ -313,8 +313,8 @@ func add_failure_condition(p_condition : Callable) -> void:
 	__sync_why_cant_be_failed_with_debugger()
 
 
-# Returns a reference to the internal quest failure conditions
-func __get_failure_conditions() -> Array:
+## Returns a reference to the internal quest failure conditions. Modifying this array will directly modify the data of the quest entry. Use with caution.
+func get_failure_conditions() -> Array:
 	var failure_conditions_array : Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
 	return failure_conditions_array
 
@@ -393,8 +393,8 @@ func add_cancelation_condition(p_condition : Callable) -> void:
 	__sync_why_cant_be_canceled_with_debugger()
 
 
-# Returns a reference to the internal quest cancelation conditions
-func __get_cancelation_conditions() -> Array:
+## Returns a reference to the internal quest cancelation conditions. Modifying this array will directly modify the data of the quest entry. Use with caution.
+func get_cancelation_conditions() -> Array:
 	var cancelation_conditions_array : Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
 	return cancelation_conditions_array
 
@@ -473,8 +473,8 @@ func add_acceptance_condition(p_condition : Callable) -> void:
 	__sync_why_cant_be_accepted_with_debugger()
 
 
-# Returns a reference to the internal quest acceptance conditions
-func __get_acceptance_conditions() -> Array:
+## Returns a reference to the internal quest acceptance conditions. Modifying this array will directly modify the data of the quest entry. Use with caution.
+func get_acceptance_conditions() -> Array:
 	var acceptance_conditions_array : Array = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_CONDITIONS, [])
 	return acceptance_conditions_array
 
@@ -553,8 +553,8 @@ func add_rejection_condition(p_condition : Callable) -> void:
 	__sync_why_cant_be_rejected_with_debugger()
 
 
-# Returns a reference to the internal quest rejection conditions
-func __get_rejection_conditions() -> Array:
+## Returns a reference to the internal quest rejection conditions. Modifying this array will directly modify the data of the quest entry. Use with caution.
+func get_rejection_conditions() -> Array:
 	var rejection_conditions_array : Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
 	return rejection_conditions_array
 

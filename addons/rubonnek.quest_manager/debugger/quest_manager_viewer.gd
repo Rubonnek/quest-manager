@@ -400,7 +400,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		var why_cant_be_accepted_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_accepted" % quest_id)
 		var not_accepted_reasons : Array = quest_manager.get_meta(why_cant_be_accepted_meta_key, [])
 		data_view += "Can Be Accepted: %s\n" % str(not_accepted_reasons.is_empty())
-		var acceptance_conditions : Array = quest.__get_acceptance_conditions()
+		var acceptance_conditions : Array = quest.get_acceptance_conditions()
 		if not acceptance_conditions.is_empty():
 			data_view += "Acceptance Conditions: %s\n" % JSON.stringify(acceptance_conditions, "\t").strip_edges(true,true)
 		if not not_accepted_reasons.is_empty():
@@ -412,7 +412,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		var why_cant_be_rejected_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_rejected" % quest_id)
 		var not_rejected_reasons : Array = quest_manager.get_meta(why_cant_be_rejected_meta_key, [])
 		data_view += "Can Be Rejected: %s\n" % str(not_rejected_reasons.is_empty())
-		var rejection_conditions : Array = quest.__get_rejection_conditions()
+		var rejection_conditions : Array = quest.get_rejection_conditions()
 		if not rejection_conditions.is_empty():
 			data_view += "Acceptance Conditions: %s\n" % JSON.stringify(rejection_conditions, "\t").strip_edges(true,true)
 		if not not_rejected_reasons.is_empty():
@@ -424,7 +424,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		var why_cant_be_completed_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_completed" % quest_id)
 		var not_completed_reasons : Array = quest_manager.get_meta(why_cant_be_completed_meta_key, [])
 		data_view += "Can Be Completed: %s\n" % str(not_completed_reasons.is_empty())
-		var completion_conditions : Array = quest.__get_completion_conditions()
+		var completion_conditions : Array = quest.get_completion_conditions()
 		if not completion_conditions.is_empty():
 			data_view += "Completion Conditions: %s\n" % JSON.stringify(completion_conditions, "\t").strip_edges(true,true)
 		if not not_completed_reasons.is_empty():
@@ -436,7 +436,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		var why_cant_be_failed_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_failed" % quest_id)
 		var not_failed_reasons : Array = quest_manager.get_meta(why_cant_be_failed_meta_key, [])
 		data_view += "Can Be Failed: %s\n" % str(not_failed_reasons.is_empty())
-		var failure_conditions : Array = quest.__get_failure_conditions()
+		var failure_conditions : Array = quest.get_failure_conditions()
 		if not failure_conditions.is_empty():
 			data_view += "Failure Conditions: %s\n" % JSON.stringify(failure_conditions, "\t").strip_edges(true,true)
 		if not not_failed_reasons.is_empty():
@@ -448,7 +448,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		var why_cant_be_canceled_meta_key : StringName = StringName("_quest_id_%d_why_cant_be_canceled" % quest_id)
 		var not_canceled_reasons : Array = quest_manager.get_meta(why_cant_be_canceled_meta_key, [])
 		data_view += "Can Be Canceled: %s\n" % str(not_canceled_reasons.is_empty())
-		var cancelation_conditions : Array = quest.__get_cancelation_conditions()
+		var cancelation_conditions : Array = quest.get_cancelation_conditions()
 		if not cancelation_conditions.is_empty():
 			data_view += "Cancelation Conditions: %s\n" % JSON.stringify(cancelation_conditions, "\t").strip_edges(true,true)
 		if not not_canceled_reasons.is_empty():
