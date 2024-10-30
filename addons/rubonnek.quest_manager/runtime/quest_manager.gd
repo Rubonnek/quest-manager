@@ -85,15 +85,7 @@ func has_quest(p_quest_id : int) -> bool:
 	return p_quest_id < _m_quests.size()
 
 
-## Returns the number of quest entries. It can be used to iterate over the topmost quests:[br]
-## [br]
-## [b]Quickstart[/b]:
-## [codeblock]
-## for quest_id : int in quest_manager.size():
-## 	var quest : QuestEntry = quest_manager.get_quest()
-## 	if not quest.has_parent():
-## 		pass # Do something here
-## [/codeblock]
+## Returns the number of quest entries.
 func size() -> int:
 	return _m_quests.size()
 
@@ -163,6 +155,7 @@ func set_data(p_data : Array) -> void:
 
 ## Returns a duplicated quests array in a tree-like format with internal keys replaced with strings for easier reading/debugging.[br]
 ## [br]
+## [b]Example[/b]:
 ## [codeblock]
 ## var quest_manager : QuestManager = QuestManager.new()
 ## var quest_entry : QuestEntry = quest_manager.add_quest("Quest Title", "Quest Description")

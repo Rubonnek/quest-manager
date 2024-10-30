@@ -282,7 +282,7 @@ func clear_completion_conditions() -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the quest as completed by increasing an internal quest completion count by 1. This function will emit [signal QuestManager.quest_completed].
+## Sets the quest as completed and increases an internal quest completion count by 1. This function will emit [signal QuestManager.quest_completed].
 func set_completed() -> void:
 	_m_quest_entry_dictionary[_key.IS_COMPLETED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.COMPLETION_COUNT, 0) + 1
@@ -362,7 +362,7 @@ func clear_failure_conditions() -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the quest as failed by increasing an internal quest failure count by 1. This function will emit [signal QuestManager.quest_failed].
+## Sets the quest as failed and increases an internal quest failure count by 1. This function will emit [signal QuestManager.quest_failed].
 func set_failed() -> void:
 	_m_quest_entry_dictionary[_key.IS_FAILED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.FAILURE_COUNT, 0) + 1
@@ -442,7 +442,7 @@ func clear_cancelation_conditions() -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the quest as canceled by increasing an internal quest cancelation count by 1. This function will emit [signal QuestManager.quest_canceled].
+## Sets the quest as canceled and increases an internal quest cancelation count by 1. This function will emit [signal QuestManager.quest_canceled].
 func set_canceled() -> void:
 	_m_quest_entry_dictionary[_key.IS_CANCELED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.CANCELATION_COUNT, 0) + 1
@@ -523,7 +523,7 @@ func clear_acceptance_conditions() -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the quest as accepted by increasing an internal quest acceptance count by 1. This function will emit [signal QuestManager.quest_accepted].
+## Sets the quest as accepted and increases an internal quest acceptance count by 1. This function will emit [signal QuestManager.quest_accepted].
 func set_accepted() -> void:
 	_m_quest_entry_dictionary[_key.IS_ACCEPTED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0) + 1
@@ -603,7 +603,7 @@ func clear_rejection_conditions() -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Sets the quest as rejected by increasing an internal quest rejection count by 1. This function will emit [signal QuestManager.quest_rejected].
+## Sets the quest as rejected and increases an internal quest rejection count by 1. This function will emit [signal QuestManager.quest_rejected].
 func set_rejected() -> void:
 	_m_quest_entry_dictionary[_key.IS_REJECTED] = true
 	var count : int = _m_quest_entry_dictionary.get(_key.REJECTION_COUNT, 0) + 1
@@ -624,7 +624,7 @@ func get_rejection_count() -> int:
 	return count
 
 
-## Sets the quest as active.
+## Sets the quest as active and increases an internal quest activation count by 1. This function will emit [signal QuestManager.quest_activated].
 func set_active() -> void:
 	var count : int = _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0) + 1
 	_m_quest_entry_dictionary[_key.ACTIVATION_COUNT] = count
@@ -636,12 +636,12 @@ func get_activation_count() -> int:
 	return _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0)
 
 
-## Sets the quest as inactive.
+## Sets the quest as inactive and increases an internal quest inactivation count by 1. This function will emit [signal QuestManager.quest_inactivated].
 func set_inactive() -> void:
 	var count : int = _m_quest_entry_dictionary.get(_key.INACTIVATION_COUNT, 0) + 1
 	_m_quest_entry_dictionary[_key.INACTIVATION_COUNT] = count
 	var _ignore : bool = _m_quest_entry_dictionary.erase(_key.IS_ACTIVE)
-	_m_quest_manager.__quest_deactivated(self)
+	_m_quest_manager.__quest_inactivated(self)
 
 
 func get_inactivation_count() -> int:
@@ -817,6 +817,7 @@ func __send_entry_to_manager_viewer() -> void:
 		EngineDebugger.send_message("quest_manager:sync_entry", [quest_manager_id, _m_quest_entry_dictionary_id, duplicated_quest_entry_data])
 
 
+## Utility function for emitting [signal QuestManager.quest_updated] when a quest is updated.
 func set_updated() -> void:
 	_m_quest_manager.__quest_updated(self)
 
