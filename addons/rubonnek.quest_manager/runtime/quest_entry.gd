@@ -28,9 +28,11 @@
 #============================================================================
 
 extends RefCounted
-## A minimalistic representation of a quest.
+## Basic representation of a quest.
 ##
-## Must be created with [method QuestManager.add_quest].
+## A quest entry contains the basic necessary data to support a quest of any type. Must be created with [method QuestManager.add_quest].[br]
+## By design, QuestEntry objects are meant to be ephemeral since all the data it manipulates is stored within the [QuestManager] it is associated with.[br]
+## Another reference to the same quest entry data can be created with [method QuestManager.get_quest] after getting the quest entry ID with [method get_id].
 class_name QuestEntry
 
 
@@ -632,6 +634,7 @@ func set_active() -> void:
 	_m_quest_manager.__quest_activated(self)
 
 
+## Returns the number of times the quest has been activated.
 func get_activation_count() -> int:
 	return _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0)
 
@@ -644,6 +647,7 @@ func set_inactive() -> void:
 	_m_quest_manager.__quest_inactivated(self)
 
 
+## Returns the number of times the quest has been inactivated.
 func get_inactivation_count() -> int:
 	return _m_quest_entry_dictionary.get(_key.INACTIVATION_COUNT, 0)
 
@@ -658,14 +662,13 @@ func has_parent() -> bool:
 	return _m_quest_entry_dictionary.has(_key.PARENT_QUEST_ID)
 
 
-## Returns the parent quest.
+## Returns the parent quest. Returns [code]null[/code] when there is no parent.
 func get_parent() -> QuestEntry:
 	if has_parent():
 		var parent_id : int = _m_quest_entry_dictionary.get(_key.PARENT_QUEST_ID)
 		return _m_quest_manager.get_quest(parent_id)
 	else:
-		push_warning("QuestEntry: entry has no parent. Returning the same quest.")
-		return self
+		return null
 
 
 # Sets the parent quest.
