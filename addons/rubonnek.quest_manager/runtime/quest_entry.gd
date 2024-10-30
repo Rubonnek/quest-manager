@@ -225,7 +225,7 @@ func has_description() -> bool:
 	return _m_quest_entry_dictionary.has(_key.DESCRIPTION)
 
 
-## Adds a boolean-returning [Callable] as a completion condition
+## Adds a boolean-returning [Callable] as a completion condition.
 func add_completion_condition(p_condition : Callable) -> void:
 	var completion_conditions_array : Array = _m_quest_entry_dictionary.get(_key.COMPLETION_CONDITIONS, [])
 	if  not _m_quest_entry_dictionary.has(_key.COMPLETION_CONDITIONS):
@@ -278,7 +278,7 @@ func has_completion_conditions() -> bool:
 	return _m_quest_entry_dictionary.has(_key.COMPLETION_CONDITIONS)
 
 
-## Clears all the completion conditions
+## Clears all the completion conditions.
 func clear_completion_conditions() -> void:
 	var _success : bool = _m_quest_entry_dictionary.erase(_key.COMPLETION_CONDITIONS)
 	__send_entry_to_manager_viewer()
@@ -305,7 +305,7 @@ func get_completion_count() -> int:
 	return count
 
 
-## Adds a boolean-returning [Callable] as a failure condition
+## Adds a boolean-returning [Callable] as a failure condition.
 func add_failure_condition(p_condition : Callable) -> void:
 	var failure_conditions_array : Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
 	if  not _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS):
@@ -358,7 +358,7 @@ func has_failure_conditions() -> bool:
 	return _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS)
 
 
-## Clears all the failure conditions
+## Clears all the failure conditions.
 func clear_failure_conditions() -> void:
 	var _success : bool = _m_quest_entry_dictionary.erase(_key.FAILURE_CONDITIONS)
 	__send_entry_to_manager_viewer()
@@ -385,7 +385,7 @@ func get_failure_count() -> int:
 	return count
 
 
-## Adds a boolean-returning [Callable] as a cancelation condition
+## Adds a boolean-returning [Callable] as a cancelation condition.
 func add_cancelation_condition(p_condition : Callable) -> void:
 	var cancelation_conditions_array : Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
 	if  not _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS):
@@ -438,7 +438,7 @@ func has_cancelation_conditions() -> bool:
 	return _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS)
 
 
-## Clears all the cancelation conditions
+## Clears all the cancelation conditions.
 func clear_cancelation_conditions() -> void:
 	var _success : bool = _m_quest_entry_dictionary.erase(_key.CANCELATION_CONDITIONS)
 	__send_entry_to_manager_viewer()
@@ -465,7 +465,7 @@ func get_cancelation_count() -> int:
 	return count
 
 
-## Adds a boolean-returning [Callable] as a acceptance condition
+## Adds a boolean-returning [Callable] as a acceptance condition.
 func add_acceptance_condition(p_condition : Callable) -> void:
 	var acceptance_conditions_array : Array = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_CONDITIONS, [])
 	if  not _m_quest_entry_dictionary.has(_key.ACCEPTANCE_CONDITIONS):
@@ -519,7 +519,7 @@ func has_acceptance_conditions() -> bool:
 	return _m_quest_entry_dictionary.has(_key.ACCEPTANCE_CONDITIONS)
 
 
-## Clears all the acceptance conditions
+## Clears all the acceptance conditions.
 func clear_acceptance_conditions() -> void:
 	var _success : bool = _m_quest_entry_dictionary.erase(_key.ACCEPTANCE_CONDITIONS)
 	__send_entry_to_manager_viewer()
@@ -545,7 +545,7 @@ func get_acceptance_count() -> int:
 	var count : int = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0)
 	return count
 
-## Adds a boolean-returning [Callable] as a rejection condition
+## Adds a boolean-returning [Callable] as a rejection condition.
 func add_rejection_condition(p_condition : Callable) -> void:
 	var rejection_conditions_array : Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
 	if  not _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS):
@@ -599,7 +599,7 @@ func has_rejection_conditions() -> bool:
 	return _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS)
 
 
-## Clears all the rejection conditions
+## Clears all the rejection conditions.
 func clear_rejection_conditions() -> void:
 	var _success : bool = _m_quest_entry_dictionary.erase(_key.REJECTION_CONDITIONS)
 	__send_entry_to_manager_viewer()
@@ -684,7 +684,7 @@ func get_topmost_parent() -> QuestEntry:
 	return root_quest
 
 
-## Returns the quest ID
+## Returns the quest ID.
 func get_id() -> int:
 	return _m_quest_entry_dictionary_id
 
