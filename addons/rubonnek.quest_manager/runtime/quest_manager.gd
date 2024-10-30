@@ -196,21 +196,21 @@ func get_name() -> String:
 # Iterates over the topmost quest entries only
 var _m_iter_needle : int = 0
 
-func should_continue() -> bool:
+func __should_continue() -> bool:
 	return (_m_iter_needle < _m_quests.size())
 
 func _iter_init(_p_args : Array) -> bool:
 	_m_iter_needle = 0
-	return should_continue()
+	return __should_continue()
 
 func _iter_next(_p_args : Array) -> bool:
 	_m_iter_needle += 1
-	while should_continue():
+	while __should_continue():
 		var quest_entry : QuestEntry = get_quest(_m_iter_needle)
 		if not quest_entry.has_parent():
 			break
 		_m_iter_needle += 1
-	return should_continue()
+	return __should_continue()
 
 func _iter_get(_p_args : Variant) -> QuestEntry:
 	return get_quest(_m_iter_needle)
