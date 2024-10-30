@@ -825,6 +825,16 @@ func set_updated() -> void:
 	_m_quest_manager.__quest_updated(self)
 
 
+## Clears all the conditions installed on the quest.
+func clear_conditions() -> void:
+	var _success : bool = _m_quest_entry_dictionary.erase(_key.ACCEPTANCE_CONDITIONS)
+	_success = _m_quest_entry_dictionary.erase(_key.REJECTION_CONDITIONS)
+	_success = _m_quest_entry_dictionary.erase(_key.COMPLETION_CONDITIONS)
+	_success = _m_quest_entry_dictionary.erase(_key.FAILURE_CONDITIONS)
+	_success = _m_quest_entry_dictionary.erase(_key.CANCELATION_CONDITIONS)
+	__send_entry_to_manager_viewer()
+
+
 func _init(p_quest_entry_dictionary_id : int, p_quest_manager : QuestManager, p_quest_entry_dictionary : Dictionary = {}, p_title : String = "", p_description : String = "") -> void:
 	_m_quest_entry_dictionary_id  = p_quest_entry_dictionary_id
 	_m_quest_entry_dictionary = p_quest_entry_dictionary
