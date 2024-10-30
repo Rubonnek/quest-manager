@@ -13,28 +13,15 @@ func _ready() -> void:
 		quest_manager.set_data(data)
 		quest_id = config_file.get_value("quest_manager", "first_quest")
 	else:
-		quest_id = quest_manager.add_quest("Counters Keep Going UP", "Keep launching this scene to see the counters going up").get_id()
+		quest_id = quest_manager.add_quest("Increased counter upon creation", "Keep launching this scene to see the counters going up").get_id()
 
 	var quest : QuestEntry = quest_manager.get_quest(quest_id)
-
-	quest.set_active()
-	quest.set_inactive()
-	print("Activation Count: ", quest.get_activation_count())
-	print("Inactivation Count: ", quest.get_inactivation_count())
-
-
-	quest.set_accepted()
-	quest.set_rejected()
-	print("Acceptance Count: ", quest.get_acceptance_count())
-	print("Rejection Count: ", quest.get_rejection_count())
-
-
+	var count : int = quest.get_metadata("count", -1)
+	count += 1
+	quest.set_metadata("count", count)
 	quest.set_completed()
-	quest.set_failed()
-	quest.set_canceled()
-	print("Completion Count: ", quest.get_completion_count())
-	print("Failure Count: ", quest.get_failure_count())
-	print("Cancelation Count: ", quest.get_cancelation_count())
+
+	print("Count: ", count)
 
 	# Make sure to keep track of each quest entry ID.
 	# QuestEntry objects are meant to be ephemeral since they do not hold any data within themselves.
@@ -45,3 +32,4 @@ func _ready() -> void:
 	# quest_manager.clear_conditions() can also be called to clear the conditions of all the quests before saving its data.
 	config_file.set_value("quest_manager","data", quest_manager.get_data())
 	config_file.save(save_path)
+

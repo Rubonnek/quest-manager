@@ -392,8 +392,6 @@ func __on_quest_view_selection_item_selected() -> void:
 		data_view += "ID: %d\n" % quest_id
 		data_view += "\n"
 		data_view += "Is Active: %s\n" % quest.is_active()
-		data_view += "Activation Count: %d\n" % quest.get_activation_count()
-		data_view += "Inactivation Count: %d\n" % quest.get_inactivation_count()
 		data_view += "\n"
 
 		data_view += "Is Accepted: %s\n" % quest.is_accepted()
@@ -405,7 +403,6 @@ func __on_quest_view_selection_item_selected() -> void:
 			data_view += "Acceptance Conditions: %s\n" % JSON.stringify(acceptance_conditions, "\t").strip_edges(true,true)
 		if not not_accepted_reasons.is_empty():
 			data_view += "Why can't be accepted?: %s\n" % JSON.stringify(not_accepted_reasons, "\t").strip_edges(true,true)
-		data_view += "Acceptance Count: %s\n" % str(quest.get_acceptance_count())
 		data_view += "\n"
 
 		data_view += "Is Rejected: %s\n" % str(quest.is_rejected())
@@ -417,7 +414,6 @@ func __on_quest_view_selection_item_selected() -> void:
 			data_view += "Acceptance Conditions: %s\n" % JSON.stringify(rejection_conditions, "\t").strip_edges(true,true)
 		if not not_rejected_reasons.is_empty():
 			data_view += "Why can't be rejected?: %s\n" % JSON.stringify(not_rejected_reasons, "\t").strip_edges(true,true)
-		data_view += "Acceptance Count: %s\n" % str(quest.get_rejection_count())
 		data_view += "\n"
 
 		data_view += "Is Completed: %s\n" % str(quest.is_completed())
@@ -429,7 +425,6 @@ func __on_quest_view_selection_item_selected() -> void:
 			data_view += "Completion Conditions: %s\n" % JSON.stringify(completion_conditions, "\t").strip_edges(true,true)
 		if not not_completed_reasons.is_empty():
 			data_view += "Why can't be completed?: %s\n" % JSON.stringify(not_completed_reasons, "\t").strip_edges(true,true)
-		data_view += "Completion Count: %s\n" % str(quest.get_completion_count())
 		data_view += "\n"
 
 		data_view += "Is Failed: %s\n" % str(quest.is_failed())
@@ -441,7 +436,6 @@ func __on_quest_view_selection_item_selected() -> void:
 			data_view += "Failure Conditions: %s\n" % JSON.stringify(failure_conditions, "\t").strip_edges(true,true)
 		if not not_failed_reasons.is_empty():
 			data_view += "Why can't be failed?: %s\n" % JSON.stringify(not_failed_reasons, "\t").strip_edges(true,true)
-		data_view += "Failure Count: %s\n" % str(quest.get_failure_count())
 		data_view += "\n"
 
 		data_view += "Is Canceled: %s\n" % str(quest.is_canceled())
@@ -453,7 +447,6 @@ func __on_quest_view_selection_item_selected() -> void:
 			data_view += "Cancelation Conditions: %s\n" % JSON.stringify(cancelation_conditions, "\t").strip_edges(true,true)
 		if not not_canceled_reasons.is_empty():
 			data_view += "Why can't be canceled?: %s\n" % JSON.stringify(not_canceled_reasons, "\t").strip_edges(true,true)
-		data_view += "Cancelation Count: %s\n" % str(quest.get_cancelation_count())
 
 		quest_manager_viewer_quest_data_view_text_edit_.set_text(data_view.strip_edges(true,true))
 

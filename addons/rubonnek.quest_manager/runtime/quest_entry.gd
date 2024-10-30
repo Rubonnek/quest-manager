@@ -48,27 +48,20 @@ enum _key {
 	METADATA,
 
 	IS_ACTIVE,
-	ACTIVATION_COUNT,
-	INACTIVATION_COUNT,
 
 	IS_ACCEPTED,
-	ACCEPTANCE_COUNT,
 	ACCEPTANCE_CONDITIONS,
 
 	IS_REJECTED,
-	REJECTION_COUNT,
 	REJECTION_CONDITIONS,
 
 	IS_COMPLETED,
-	COMPLETION_COUNT,
 	COMPLETION_CONDITIONS,
 
 	IS_FAILED,
-	FAILURE_COUNT,
 	FAILURE_CONDITIONS,
 
 	IS_CANCELED,
-	CANCELATION_COUNT,
 	CANCELATION_CONDITIONS,
 }
 
@@ -287,8 +280,6 @@ func clear_completion_conditions() -> void:
 ## Sets the quest as completed and increases an internal quest completion count by 1. This function will emit [signal QuestManager.quest_completed].
 func set_completed() -> void:
 	_m_quest_entry_dictionary[_key.IS_COMPLETED] = true
-	var count : int = _m_quest_entry_dictionary.get(_key.COMPLETION_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.COMPLETION_COUNT] = count
 	_m_quest_manager.__quest_completed(self)
 	__send_entry_to_manager_viewer()
 
@@ -297,12 +288,6 @@ func set_completed() -> void:
 func is_completed() -> bool:
 	var status : bool = _m_quest_entry_dictionary.get(_key.IS_COMPLETED, false)
 	return status
-
-
-## Returns the number of times the quest has been completed.
-func get_completion_count() -> int:
-	var count : int = _m_quest_entry_dictionary.get(_key.COMPLETION_COUNT, 0)
-	return count
 
 
 ## Adds a boolean-returning [Callable] as a failure condition.
@@ -367,8 +352,6 @@ func clear_failure_conditions() -> void:
 ## Sets the quest as failed and increases an internal quest failure count by 1. This function will emit [signal QuestManager.quest_failed].
 func set_failed() -> void:
 	_m_quest_entry_dictionary[_key.IS_FAILED] = true
-	var count : int = _m_quest_entry_dictionary.get(_key.FAILURE_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.FAILURE_COUNT] = count
 	_m_quest_manager.__quest_failed(self)
 	__send_entry_to_manager_viewer()
 
@@ -377,12 +360,6 @@ func set_failed() -> void:
 func is_failed() -> bool:
 	var status : bool = _m_quest_entry_dictionary.get(_key.IS_FAILED, false)
 	return status
-
-
-## Returns the number of times the quest has been failed.
-func get_failure_count() -> int:
-	var count : int = _m_quest_entry_dictionary.get(_key.FAILURE_COUNT, 0)
-	return count
 
 
 ## Adds a boolean-returning [Callable] as a cancelation condition.
@@ -447,8 +424,6 @@ func clear_cancelation_conditions() -> void:
 ## Sets the quest as canceled and increases an internal quest cancelation count by 1. This function will emit [signal QuestManager.quest_canceled].
 func set_canceled() -> void:
 	_m_quest_entry_dictionary[_key.IS_CANCELED] = true
-	var count : int = _m_quest_entry_dictionary.get(_key.CANCELATION_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.CANCELATION_COUNT] = count
 	_m_quest_manager.__quest_canceled(self)
 	__send_entry_to_manager_viewer()
 
@@ -457,12 +432,6 @@ func set_canceled() -> void:
 func is_canceled() -> bool:
 	var status : bool = _m_quest_entry_dictionary.get(_key.IS_CANCELED, false)
 	return status
-
-
-## Returns the number of times the quest has been canceled.
-func get_cancelation_count() -> int:
-	var count : int = _m_quest_entry_dictionary.get(_key.CANCELATION_COUNT, 0)
-	return count
 
 
 ## Adds a boolean-returning [Callable] as a acceptance condition.
@@ -528,8 +497,6 @@ func clear_acceptance_conditions() -> void:
 ## Sets the quest as accepted and increases an internal quest acceptance count by 1. This function will emit [signal QuestManager.quest_accepted].
 func set_accepted() -> void:
 	_m_quest_entry_dictionary[_key.IS_ACCEPTED] = true
-	var count : int = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.ACCEPTANCE_COUNT] = count
 	_m_quest_manager.__quest_accepted(self)
 	__send_entry_to_manager_viewer()
 
@@ -539,11 +506,6 @@ func is_accepted() -> bool:
 	var status : bool = _m_quest_entry_dictionary.get(_key.IS_ACCEPTED, false)
 	return status
 
-
-## Returns the number of times the quest has been accepted.
-func get_acceptance_count() -> int:
-	var count : int = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_COUNT, 0)
-	return count
 
 ## Adds a boolean-returning [Callable] as a rejection condition.
 func add_rejection_condition(p_condition : Callable) -> void:
@@ -608,8 +570,6 @@ func clear_rejection_conditions() -> void:
 ## Sets the quest as rejected and increases an internal quest rejection count by 1. This function will emit [signal QuestManager.quest_rejected].
 func set_rejected() -> void:
 	_m_quest_entry_dictionary[_key.IS_REJECTED] = true
-	var count : int = _m_quest_entry_dictionary.get(_key.REJECTION_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.REJECTION_COUNT] = count
 	_m_quest_manager.__quest_rejected(self)
 	__send_entry_to_manager_viewer()
 
@@ -620,36 +580,16 @@ func is_rejected() -> bool:
 	return status
 
 
-## Returns the number of times the quest has been rejected.
-func get_rejection_count() -> int:
-	var count : int = _m_quest_entry_dictionary.get(_key.REJECTION_COUNT, 0)
-	return count
-
-
 ## Sets the quest as active and increases an internal quest activation count by 1. This function will emit [signal QuestManager.quest_activated].
 func set_active() -> void:
-	var count : int = _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.ACTIVATION_COUNT] = count
 	_m_quest_entry_dictionary[_key.IS_ACTIVE] = true
 	_m_quest_manager.__quest_activated(self)
 
 
-## Returns the number of times the quest has been activated.
-func get_activation_count() -> int:
-	return _m_quest_entry_dictionary.get(_key.ACTIVATION_COUNT, 0)
-
-
 ## Sets the quest as inactive and increases an internal quest inactivation count by 1. This function will emit [signal QuestManager.quest_inactivated].
 func set_inactive() -> void:
-	var count : int = _m_quest_entry_dictionary.get(_key.INACTIVATION_COUNT, 0) + 1
-	_m_quest_entry_dictionary[_key.INACTIVATION_COUNT] = count
 	var _ignore : bool = _m_quest_entry_dictionary.erase(_key.IS_ACTIVE)
 	_m_quest_manager.__quest_inactivated(self)
-
-
-## Returns the number of times the quest has been inactivated.
-func get_inactivation_count() -> int:
-	return _m_quest_entry_dictionary.get(_key.INACTIVATION_COUNT, 0)
 
 
 ## Returns true if the quest is active.
@@ -712,6 +652,7 @@ func get_metadata_data() -> Dictionary:
 		# There's a chance the user wants to modify it externally and have it update the QuestEntry automatically -- make sure we store a reference of that metadata:
 		_m_quest_entry_dictionary[_key.METADATA] = metadata
 	return metadata
+
 
 ## Returns true if the quest has some metadata.
 func has_metadata() -> bool:
