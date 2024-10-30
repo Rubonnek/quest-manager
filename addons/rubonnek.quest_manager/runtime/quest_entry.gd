@@ -726,7 +726,7 @@ func get_data() -> Dictionary:
 	return _m_quest_entry_dictionary
 
 
-## Returns a duplicated quest dictionary in which its data keys have been replaced with strings and its subquests with their respective data for easy visualization/debugging/displaying.
+## Returns a duplicated quest dictionary in which its data keys have been replaced with strings and its subquests with their respective data for a simpler text-based visualization.
 func prettify() -> Dictionary:
 	# Lambda function for making the data readable:
 	var make_readable : Callable = func (p_quest_entry_dictionary_id : int, p_quest_entry_dictionary : Dictionary) -> void:
