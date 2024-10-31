@@ -23,9 +23,8 @@ func _ready() -> void:
 
 	print("Count: ", count)
 
-	# Make sure to keep track of each quest entry ID.
-	# QuestEntry objects are meant to be ephemeral since they do not hold any data within themselves.
-	# All the data is stored in QuestManager.
+	# The order in which each quest is added is important.
+	# Tracking each quest entry ID is useful when mid-development the order in which the quests are created changes.
 	config_file.set_value("quest_manager", "first_quest", quest_id)
 
 	# WARNING: On an actual project you might want to clear the quest conditions before saving the quest to disk and reinstall those conditions at runtime after loading the data from disk.

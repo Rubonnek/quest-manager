@@ -31,8 +31,7 @@ extends RefCounted
 ## Basic representation of a quest.
 ##
 ## A quest entry contains the basic necessary data to support a quest of any type. Must be created with [method QuestManager.add_quest].[br]
-## By design, QuestEntry objects are meant to be ephemeral since all the data it manipulates is stored within the [QuestManager] it is associated with.[br]
-## Another reference to the same quest entry data can be created with [method QuestManager.get_quest] after getting the quest entry ID with [method get_id].
+## By design, quest entries themselves don't hold any data -- all the data it manipulates is stored within the [QuestManager] it is associated with.[br]
 class_name QuestEntry
 
 
