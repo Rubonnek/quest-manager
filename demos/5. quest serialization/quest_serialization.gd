@@ -9,7 +9,7 @@ func _ready() -> void:
 
 	if FileAccess.file_exists(save_path):
 		config_file.load(save_path)
-		var data : Array = config_file.get_value("quest_manager", "data")
+		var data : Array[Dictionary] = config_file.get_value("quest_manager", "data")
 		quest_manager.set_data(data)
 		quest_id = config_file.get_value("quest_manager", "first_quest")
 	else:

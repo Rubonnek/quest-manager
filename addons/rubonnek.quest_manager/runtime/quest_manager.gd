@@ -44,64 +44,46 @@ extends RefCounted
 class_name QuestManager
 
 
-## Emitted when [method QuestEntry.set_active] is called.
-signal quest_activated(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_inactive] is called.
-signal quest_inactivated(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_accepted] is called.
-signal quest_accepted(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_rejected] is called.
-signal quest_rejected(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_canceled] is called.
-signal quest_canceled(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_completed] is called.
-signal quest_completed(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_failed] is called.
-signal quest_failed(p_quest : QuestEntry)
-## Emitted when [method QuestEntry.set_updated] is called.
-signal quest_updated(p_quest : QuestEntry)
-
-var _m_quests : Array = []
+var _m_quest_dictionaries : Array[Dictionary] = []
+var _m_quest_entries : Array[QuestEntry] = []
 
 
 ## Adds a topmost quest entry.
 func add_quest(p_title : String = "", p_description : String = "") -> QuestEntry:
-	var quest_id : int = _m_quests.size()
-	var quest : QuestEntry = QuestEntry.new(quest_id, self, {}, p_title, p_description)
-	_m_quests.push_back(quest.get_data())
-	quest.__send_entry_to_manager_viewer()
-	return quest
+	var quest_id : int = _m_quest_dictionaries.size()
+	var quest_entry : QuestEntry = QuestEntry.new(quest_id, weakref(self) as WeakRef, {}, p_title, p_description)
+	_m_quest_dictionaries.push_back(quest_entry.get_data())
+	_m_quest_entries.push_back(quest_entry)
+	quest_entry.__send_entry_to_manager_viewer()
+	return quest_entry
 
 
 ## Returns a quest entry given its ID.
 func get_quest(p_quest_id : int) -> QuestEntry:
-	assert(p_quest_id < _m_quests.size() && p_quest_id >= 0, "QuestManager: QuestEntry ID is not present.")
-	var data : Dictionary = _m_quests[p_quest_id]
-	return QuestEntry.new(p_quest_id, self, data)
+	assert(p_quest_id < _m_quest_dictionaries.size() && p_quest_id >= 0, "QuestManager: QuestEntry ID is not present.")
+	return _m_quest_entries[p_quest_id]
 
 
 ## Returns true if a quest ID is present.
 func has_quest(p_quest_id : int) -> bool:
-	return p_quest_id < _m_quests.size()
+	return p_quest_id < _m_quest_dictionaries.size()
 
 
 ## Returns the number of quest entries.
 func size() -> int:
-	return _m_quests.size()
+	return _m_quest_dictionaries.size()
 
 
 ## Returns a number between 0 and 1 representing the percent of overall accepted and completed tasks.
 func get_progress() -> float:
-	if _m_quests.is_empty():
+	if _m_quest_dictionaries.is_empty():
 		return 1.0
-	var total_steps : float = _m_quests.size() * 2
+	var total_steps : float = _m_quest_dictionaries.size() * 2
 	var steps_taken : float = 0
-	for quest_id : int in _m_quests:
-		var data : Dictionary = _m_quests[quest_id]
-		var quest : QuestEntry = QuestEntry.new(quest_id, self, data)
-		if quest.is_accepted():
+	for quest_entry : QuestEntry in _m_quest_entries:
+		if quest_entry.is_accepted():
 			steps_taken += 1
-		if quest.is_completed():
+		if quest_entry.is_completed():
 			steps_taken += 1
 	return steps_taken / total_steps
 
@@ -110,9 +92,9 @@ func get_progress() -> float:
 ## [br]
 ## [color=yellow]Warning:[/color] Appending quests from a source quest manager will duplicate the quests data, meaning that updating any data in the source quest entry or quest manager won't automatically update the quest in both places at the same time.
 func append(p_quest_manager : QuestManager) -> void:
-	var id_offset : int = _m_quests.size()
-	_m_quests.append_array(p_quest_manager.get_data().duplicate(true))
-	for index : int in range(id_offset, _m_quests.size()):
+	var id_offset : int = _m_quest_dictionaries.size()
+	_m_quest_dictionaries.append_array(p_quest_manager.get_data().duplicate(true))
+	for index : int in range(id_offset, _m_quest_dictionaries.size()):
 		# Update the ID on each of the appended quest entries
 		var quest_entry : QuestEntry = get_quest(index)
 		if quest_entry.has_parent():
@@ -129,7 +111,7 @@ func append(p_quest_manager : QuestManager) -> void:
 
 ## Clears every condition from every quest entry. Useful when saving quests to disk since some conditions may become invalid upon loading.
 func clear_conditions() -> void:
-	for index : int in _m_quests.size():
+	for index : int in _m_quest_dictionaries.size():
 		# Clear all the conditions
 		var quest_entry : QuestEntry = get_quest(index)
 		quest_entry.clear_acceptance_conditions()
@@ -140,16 +122,18 @@ func clear_conditions() -> void:
 
 
 ## Returns a reference to the internal data.
-func get_data() -> Array:
-	return _m_quests
+func get_data() -> Array[Dictionary]:
+	return _m_quest_dictionaries
 
 
 ## Overwrites the quest manager data.
-func set_data(p_data : Array) -> void:
-	_m_quests = p_data
-	if EngineDebugger.is_active():
-		for quest_id : int in p_data.size():
-			var quest_entry : QuestEntry = get_quest(quest_id)
+func set_data(p_data : Array[Dictionary]) -> void:
+	_m_quest_dictionaries = p_data
+	for quest_id : int in p_data.size():
+		var quest_data : Dictionary = p_data[quest_id]
+		var quest_entry : QuestEntry = QuestEntry.new(quest_id, weakref(self) as WeakRef, quest_data)
+		_m_quest_entries.push_back(quest_entry)
+		if EngineDebugger.is_active():
 			quest_entry.__send_entry_to_manager_viewer()
 
 
@@ -164,12 +148,12 @@ func set_data(p_data : Array) -> void:
 ## [/codeblock]
 func prettify() -> Array:
 	var prettified_data : Array = []
-	for quest_id : int in _m_quests.size():
+	for quest_id : int in _m_quest_dictionaries.size():
 		# Prettify the top level quests only:
-		var quest : QuestEntry = get_quest(quest_id)
-		if quest.has_parent():
+		var quest_entry : QuestEntry = get_quest(quest_id)
+		if quest_entry.has_parent():
 			continue
-		prettified_data.push_back(quest.prettify())
+		prettified_data.push_back(quest_entry.prettify())
 	return prettified_data
 
 
@@ -190,7 +174,7 @@ func get_name() -> String:
 var _m_iter_needle : int = 0
 
 func __should_continue() -> bool:
-	return (_m_iter_needle < _m_quests.size())
+	return (_m_iter_needle < _m_quest_dictionaries.size())
 
 func _iter_init(_p_args : Array) -> bool:
 	_m_iter_needle = 0
@@ -209,37 +193,18 @@ func _iter_get(_p_args : Variant) -> QuestEntry:
 	return get_quest(_m_iter_needle)
 # ==== ITERATOR ====
 
-
-func __quest_activated(p_quest_entry : QuestEntry) -> void:
-	quest_activated.emit(p_quest_entry)
-
-
-func __quest_inactivated(p_quest_entry : QuestEntry) -> void:
-	quest_inactivated.emit(p_quest_entry)
-
-
-func __quest_accepted(p_quest_entry : QuestEntry) -> void:
-	quest_accepted.emit(p_quest_entry)
-
-
-func __quest_rejected(p_quest_entry : QuestEntry) -> void:
-	quest_rejected.emit(p_quest_entry)
-
-
-func __quest_completed(p_quest_entry : QuestEntry) -> void:
-	quest_completed.emit(p_quest_entry)
-
-
-func __quest_failed(p_quest_entry : QuestEntry) -> void:
-	quest_failed.emit(p_quest_entry)
-
-
-func __quest_canceled(p_quest_entry : QuestEntry) -> void:
-	quest_canceled.emit(p_quest_entry)
-
-
-func __quest_updated(p_quest_entry : QuestEntry) -> void:
-	quest_updated.emit(p_quest_entry)
+# Injects a quest dictionary given a quest ID. This is used in the debugger to synchronize QuestEntries.
+func _inject(p_quest_id : int, p_quest_dictionary : Dictionary) -> void:
+	if _m_quest_dictionaries.size()  <= p_quest_id:
+		if _m_quest_dictionaries.resize(p_quest_id + 1) != OK:
+			push_warning("QuestManager: Unable to inject quest data array! The array won't be visualized properly.")
+			return
+		if _m_quest_entries.resize(p_quest_id + 1) != OK:
+			push_warning("QuestManager: Unable to inject quest entries array! The array won't be visualized properly.")
+			return
+	_m_quest_dictionaries[p_quest_id] = p_quest_dictionary
+	var quest_entry : QuestEntry = QuestEntry.new(p_quest_id, weakref(self) as WeakRef, p_quest_dictionary)
+	_m_quest_entries[p_quest_id] = quest_entry
 
 
 func _init() -> void:

@@ -79,17 +79,10 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 
-			# May need to resize the stored engine data in order inject the entry
-			var stored_quest_manager_data : Array = stored_quest_manager.get_data()
-			var remote_quest_entry_id : int = p_data[1]
-			if stored_quest_manager_data.size() <= remote_quest_entry_id:
-				if stored_quest_manager_data.resize(remote_quest_entry_id + 1) != OK:
-					push_warning("QuestManagerViewer: Unable to resize quest manager data array! The array won't be visualized properly.")
-					return true
-
 			# Inject the remote quest entry data:
+			var remote_quest_entry_id : int = p_data[1]
 			var remote_quest_entry_data : Dictionary = p_data[2]
-			stored_quest_manager_data[remote_quest_entry_id] = remote_quest_entry_data
+			stored_quest_manager._inject(remote_quest_entry_id, remote_quest_entry_data)
 
 			# Refresh the quest entries if needed:
 			__refresh_quest_entries_if_needed(stored_quest_manager)
