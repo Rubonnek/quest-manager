@@ -16,7 +16,7 @@ A minimalistic quest manager for the Godot Game Engine.
 
 ## 🚀 Getting Started
 
-- Clone/[download](https://github.com/Rubonnek/quest-manager/archive/refs/heads/master.zip) the repository and check out the demo!
+- Clone/[download](https://github.com/Rubonnek/quest-manager/archive/refs/heads/master.zip) the repository and check out the demos!
 
 ## 📦 Installation
 
