@@ -632,6 +632,11 @@ func is_active() -> bool:
 	return _m_quest_entry_dictionary.has(_key.IS_ACTIVE)
 
 
+## Returns true if the quest is inactive.
+func is_inactive() -> bool:
+	return not is_active()
+
+
 ## Returns true if the quest has a parent quest.
 func has_parent() -> bool:
 	return _m_quest_entry_dictionary.has(_key.PARENT_QUEST_ID)
