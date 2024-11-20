@@ -324,7 +324,14 @@ func __refresh_quest_entries() -> void:
 				if quest_description.is_empty():
 					quest_description = "(Empty Description)"
 				quest_tree_item.set_text(column, quest_title)
-				var tooltip_string : String = "ID: %d\nIs Active %s\nIs Accepted: %s\nIs Completed: %s\nDescription: %s" % [quest_id, str(quest.is_active()), str(quest.is_accepted()), str(quest.is_completed()), quest_description]
+				var tooltip_string : String = "ID: %d\n" % quest_id
+				tooltip_string += "Description: %s\n" % quest_description
+				tooltip_string += "Is Active %s\n" % quest.is_active()
+				tooltip_string += "Is Accepted: %s\n" % quest.is_accepted()
+				tooltip_string += "Is Rejected: %s\n" % quest.is_rejected()
+				tooltip_string += "Is Completed: %s\n" % quest.is_completed()
+				tooltip_string += "Is Failed: %s\n" % quest.is_failed()
+				tooltip_string += "Is Canceled: %s\n" % quest.is_canceled()
 				quest_tree_item.set_tooltip_text(column, tooltip_string)
 
 				# Store the quest manager and quest ID on its tree item so that we can retrieve its data easily later.
@@ -385,6 +392,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		# Update the data view
 		var data_view : String = ""
 		data_view += "ID: %d\n" % quest_id
+		data_view += "Description: %s\n" % quest.get_description()
 		data_view += "\n"
 		data_view += "Is Active: %s\n" % quest.is_active()
 		data_view += "\n"
