@@ -37,8 +37,6 @@ class_name QuestEntry
 
 ## Emitted when [method set_active] is called.
 signal quest_activated(p_quest : QuestEntry)
-## Emitted when [method set_inactive] is called.
-signal quest_inactivated(p_quest : QuestEntry)
 ## Emitted when [method set_accepted] is called.
 signal quest_accepted(p_quest : QuestEntry)
 ## Emitted when [method set_rejected] is called.
@@ -313,16 +311,18 @@ func clear_completion_conditions() -> void:
 
 
 ## Sets the quest as completed. This function will emit [signal quest_completed].
-func set_completed() -> void:
-	_m_quest_entry_dictionary[_key.IS_COMPLETED] = true
+func set_completed(p_status : bool = true) -> void:
+	if p_status:
+		_m_quest_entry_dictionary[_key.IS_COMPLETED] = true
+	else:
+		var _success : bool = _m_quest_entry_dictionary.erase(_key.IS_COMPLETED)
 	quest_completed.emit(self)
 	__send_entry_to_manager_viewer()
 
 
 ## Returns true if the quest has been completed. See [method set_completed].
 func is_completed() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.IS_COMPLETED, false)
-	return status
+	return _m_quest_entry_dictionary.has(_key.IS_COMPLETED)
 
 
 ## Adds a boolean-returning [Callable] as a failure condition.
@@ -385,16 +385,18 @@ func clear_failure_conditions() -> void:
 
 
 ## Sets the quest as failed. This function will emit [signal quest_failed].
-func set_failed() -> void:
-	_m_quest_entry_dictionary[_key.IS_FAILED] = true
+func set_failed(p_status : bool = true) -> void:
+	if p_status:
+		_m_quest_entry_dictionary[_key.IS_FAILED] = true
+	else:
+		var _success : bool = _m_quest_entry_dictionary.erase(_key.IS_FAILED)
 	quest_failed.emit(self)
 	__send_entry_to_manager_viewer()
 
 
 ## Returns true if the quest has been failed. See [method set_failed].
 func is_failed() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.IS_FAILED, false)
-	return status
+	return _m_quest_entry_dictionary.has(_key.IS_FAILED)
 
 
 ## Adds a boolean-returning [Callable] as a cancelation condition.
@@ -457,16 +459,18 @@ func clear_cancelation_conditions() -> void:
 
 
 ## Sets the quest as canceled. This function will emit [signal quest_canceled].
-func set_canceled() -> void:
-	_m_quest_entry_dictionary[_key.IS_CANCELED] = true
+func set_canceled(p_status : bool = true) -> void:
+	if p_status:
+		_m_quest_entry_dictionary[_key.IS_CANCELED] = true
+	else:
+		var _success : bool = _m_quest_entry_dictionary.erase(_key.IS_CANCELED)
 	quest_canceled.emit(self)
 	__send_entry_to_manager_viewer()
 
 
 ## Returns true if the quest has been canceled. See [method set_canceled].
 func is_canceled() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.IS_CANCELED, false)
-	return status
+	return _m_quest_entry_dictionary.has(_key.IS_CANCELED)
 
 
 ## Adds a boolean-returning [Callable] as a acceptance condition.
@@ -530,16 +534,18 @@ func clear_acceptance_conditions() -> void:
 
 
 ## Sets the quest as accepted. This function will emit [signal quest_accepted].
-func set_accepted() -> void:
-	_m_quest_entry_dictionary[_key.IS_ACCEPTED] = true
+func set_accepted(p_status : bool = true) -> void:
+	if p_status:
+		_m_quest_entry_dictionary[_key.IS_ACCEPTED] = true
+	else:
+		var _success : bool = _m_quest_entry_dictionary.erase(_key.IS_ACCEPTED)
 	quest_accepted.emit(self)
 	__send_entry_to_manager_viewer()
 
 
 ## Returns true if the quest has been accepted. See [method set_accepted].
 func is_accepted() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.IS_ACCEPTED, false)
-	return status
+	return _m_quest_entry_dictionary.has(_key.IS_ACCEPTED)
 
 
 ## Adds a boolean-returning [Callable] as a rejection condition.
@@ -603,38 +609,33 @@ func clear_rejection_conditions() -> void:
 
 
 ## Sets the quest as rejected. This function will emit [signal quest_rejected].
-func set_rejected() -> void:
-	_m_quest_entry_dictionary[_key.IS_REJECTED] = true
+func set_rejected(p_status : bool = true) -> void:
+	if p_status:
+		_m_quest_entry_dictionary[_key.IS_REJECTED] = true
+	else:
+		var _success : bool = _m_quest_entry_dictionary.erase(_key.IS_REJECTED)
 	quest_rejected.emit(self)
 	__send_entry_to_manager_viewer()
 
 
 ## Returns true if the quest has been rejected. See [method set_rejected].
 func is_rejected() -> bool:
-	var status : bool = _m_quest_entry_dictionary.get(_key.IS_REJECTED, false)
-	return status
+	return _m_quest_entry_dictionary.has(_key.IS_REJECTED)
 
 
 ## Sets the quest as active. This function will emit [signal quest_activated].
-func set_active() -> void:
-	_m_quest_entry_dictionary[_key.IS_ACTIVE] = true
+func set_active(p_status : bool = true) -> void:
+	if p_status:
+		_m_quest_entry_dictionary[_key.IS_ACTIVE] = true
+	else:
+		var _success : bool = _m_quest_entry_dictionary.erase(_key.IS_ACTIVE)
 	quest_activated.emit(self)
-
-
-## Sets the quest as inactive. This function will emit [signal quest_inactivated].
-func set_inactive() -> void:
-	var _ignore : bool = _m_quest_entry_dictionary.erase(_key.IS_ACTIVE)
-	quest_inactivated.emit(self)
+	__send_entry_to_manager_viewer()
 
 
 ## Returns true if the quest is active.
 func is_active() -> bool:
 	return _m_quest_entry_dictionary.has(_key.IS_ACTIVE)
-
-
-## Returns true if the quest is inactive.
-func is_inactive() -> bool:
-	return not is_active()
 
 
 ## Returns true if the quest has a parent quest.
