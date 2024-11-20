@@ -5,9 +5,10 @@ var quest_manager : QuestManager = QuestManager.new()
 func _ready() -> void:
 	var quest : QuestEntry = quest_manager.add_quest("Main Quest", "Main Quest Description")
 
-	# There's built-in support for quests to be active/inactive
+	# There's built-in support for several boolean flags:
+
+	# Quests can be active
 	quest.set_active()
-	quest.set_inactive()
 
 	# Accepted or rejected
 	quest.set_accepted()
@@ -18,5 +19,5 @@ func _ready() -> void:
 	quest.set_failed()
 	quest.set_canceled()
 
-	# As well as your own metadata
+	# And also include your own metadata
 	quest.set_metadata("some_key", "some_value")

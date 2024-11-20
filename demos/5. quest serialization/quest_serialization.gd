@@ -11,7 +11,7 @@ func _ready() -> void:
 		var quest_id : int = quest_manager.add_quest("Increased counter upon creation", "Keep launching this scene to see the counters going up").get_id()
 		quest = quest_manager.get_quest(quest_id)
 	else:
-		config_file.load(save_path)
+		var _load_success : Error = config_file.load(save_path)
 		var data : Array[Dictionary] = config_file.get_value("quest_manager", "data")
 		quest_manager.set_data(data)
 		var quest_id : int = config_file.get_value("quest_manager", "first_quest")
@@ -29,5 +29,4 @@ func _ready() -> void:
 	# WARNING: On an actual project you might want to clear the quest conditions before saving the quest to disk and reinstall those conditions at runtime after loading the data from disk.
 	# quest_manager.clear_conditions() can also be called to clear the conditions of all the quests before saving its data.
 	config_file.set_value("quest_manager","data", quest_manager.get_data())
-	config_file.save(save_path)
-
+	var _save_success : Error = config_file.save(save_path)

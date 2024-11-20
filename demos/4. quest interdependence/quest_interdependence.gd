@@ -29,6 +29,6 @@ func _ready() -> void:
 
 	# There are also helper functions for testing the states of all the subquests.
 	# For example:
-	quest.are_subquests_completed()
+	var _status : bool = quest.are_subquests_completed()
 	# Which can be used as a completion condition:
 	quest.add_completion_condition(quest.are_subquests_completed)
