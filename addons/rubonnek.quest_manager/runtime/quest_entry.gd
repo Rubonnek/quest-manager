@@ -199,6 +199,22 @@ func are_subquests_rejected() -> bool:
 	return true
 
 
+## Returns true if all the subquests are canceled.
+func are_subquests_canceled() -> bool:
+	if not has_subquests():
+		return true
+
+	var quest_id_stack : Array = get_subquests_ids()
+	while not quest_id_stack.is_empty():
+		var quest_id : int = quest_id_stack.pop_back()
+		var quest : QuestEntry = _get_manager().get_quest(quest_id)
+		if not quest.is_canceled():
+			return false
+		if quest.has_subquests():
+			quest_id_stack.append_array(quest.get_subquests_ids())
+	return true
+
+
 ## Sets the quest title.
 func set_title(p_title : String) -> void:
 	if p_title.is_empty():
