@@ -242,6 +242,8 @@ func __on_quest_manager_selection_tree_nothing_selected() -> void:
 
 	# Clear the quest view
 	quest_manager_viewer_quest_entries_tree_.clear()
+	quest_manager_viewer_quest_entries_view_warning_label_.set_text("Select a QuestManager to display its quest entries.")
+	quest_manager_viewer_quest_entries_view_warning_label_.show()
 
 	# Clear the data view
 	quest_manager_viewer_quest_data_view_text_edit_.set_text("")
