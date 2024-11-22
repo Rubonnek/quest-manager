@@ -25,4 +25,4 @@ A minimalistic quest manager for the Godot Game Engine.
 
 ## :receipt: Credits
 
-- Feather pen logo taken from [icon-library.com](https://icon-library.com/icon/feather-pen-icon-28.html) and vectorized.
+- The feather pen within the logo was taken from [icon-library.com](https://icon-library.com/icon/feather-pen-icon-28.html) and vectorized.
