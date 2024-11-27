@@ -51,7 +51,8 @@ var _m_quest_entries : Array[QuestEntry] = []
 ## Adds a topmost quest entry.
 func add_quest(p_title : String = "", p_description : String = "") -> QuestEntry:
 	var quest_id : int = _m_quest_dictionaries.size()
-	var quest_entry : QuestEntry = QuestEntry.new(quest_id, weakref(self) as WeakRef, {}, p_title, p_description)
+	var quest_manager_weakref : WeakRef = weakref(self)
+	var quest_entry : QuestEntry = QuestEntry.new(quest_id, quest_manager_weakref, {}, p_title, p_description)
 	_m_quest_dictionaries.push_back(quest_entry.get_data())
 	_m_quest_entries.push_back(quest_entry)
 	quest_entry.__send_entry_to_manager_viewer()
@@ -131,7 +132,8 @@ func set_data(p_data : Array[Dictionary]) -> void:
 	_m_quest_dictionaries = p_data
 	for quest_id : int in p_data.size():
 		var quest_data : Dictionary = p_data[quest_id]
-		var quest_entry : QuestEntry = QuestEntry.new(quest_id, weakref(self) as WeakRef, quest_data)
+		var quest_manager_weakref : WeakRef = weakref(self)
+		var quest_entry : QuestEntry = QuestEntry.new(quest_id, quest_manager_weakref, quest_data)
 		_m_quest_entries.push_back(quest_entry)
 		if EngineDebugger.is_active():
 			quest_entry.__send_entry_to_manager_viewer()
@@ -203,7 +205,8 @@ func _inject(p_quest_id : int, p_quest_dictionary : Dictionary) -> void:
 			push_warning("QuestManager: Unable to inject quest entries array! The array won't be visualized properly.")
 			return
 	_m_quest_dictionaries[p_quest_id] = p_quest_dictionary
-	var quest_entry : QuestEntry = QuestEntry.new(p_quest_id, weakref(self) as WeakRef, p_quest_dictionary)
+	var quest_manager_weakref : WeakRef = weakref(self)
+	var quest_entry : QuestEntry = QuestEntry.new(p_quest_id, quest_manager_weakref, p_quest_dictionary)
 	_m_quest_entries[p_quest_id] = quest_entry
 
 
