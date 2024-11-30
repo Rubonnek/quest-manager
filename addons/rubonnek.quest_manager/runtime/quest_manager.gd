@@ -159,14 +159,15 @@ func prettify() -> Array:
 	return prettified_data
 
 
-## Sets a name to the manager. It's only useful in debug builds since the name is only used for the quest manager viewer in the debugger.
+## Sets a name to the manager in debug builds only. The manager name is only used for display by the quest manager viewer in the debugger.
 func set_name(p_name : String) -> void:
-	set_meta(&"name", p_name)
+	if OS.is_debug_build():
+		set_meta(&"name", p_name)
 	if EngineDebugger.is_active():
 		EngineDebugger.send_message("quest_manager:set_name", [get_instance_id(), p_name])
 
 
-## Gets the name of the manager. It's only useful in debug builds since the name is only used for the quest manager viewer in the debugger.
+## Gets the name of the manager. Returns an empty string in release buidls. The manager name is only used for display by the quest manager viewer in the debugger.
 func get_name() -> String:
 	return get_meta(&"name", "")
 
