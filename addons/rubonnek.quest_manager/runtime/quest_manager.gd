@@ -197,7 +197,7 @@ func _iter_get(_p_args : Variant) -> QuestEntry:
 # ==== ITERATOR ====
 
 # Injects a quest dictionary given a quest ID. This is used in the debugger to synchronize QuestEntries.
-func _inject(p_quest_id : int, p_quest_dictionary : Dictionary) -> void:
+func __inject(p_quest_id : int, p_quest_dictionary : Dictionary) -> void:
 	if _m_quest_dictionaries.size()  <= p_quest_id:
 		if _m_quest_dictionaries.resize(p_quest_id + 1) != OK:
 			push_warning("QuestManager: Unable to inject quest data array! The array won't be visualized properly.")

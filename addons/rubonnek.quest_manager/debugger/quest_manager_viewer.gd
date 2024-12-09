@@ -82,7 +82,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			# Inject the remote quest entry data:
 			var remote_quest_entry_id : int = p_data[1]
 			var remote_quest_entry_data : Dictionary = p_data[2]
-			stored_quest_manager._inject(remote_quest_entry_id, remote_quest_entry_data)
+			stored_quest_manager.__inject(remote_quest_entry_id, remote_quest_entry_data)
 
 			# Refresh the quest entries if needed:
 			__refresh_quest_entries_if_needed(stored_quest_manager)
