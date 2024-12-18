@@ -15,6 +15,7 @@ var _m_original_quest_data_view_warning_text : String
 var _m_original_quest_metadata_view_warning_text : String
 
 var _m_remote_quest_manager_id_to_tree_item_map_cache : Dictionary
+var _m_quest_id_to_tree_item_map_cache : Array
 
 func _ready() -> void:
 	# Connect QuestManager tree signals
@@ -61,7 +62,6 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 			# Store a local QuestManager as metadata -- reuse one if provided.
 			var quest_manager : QuestManager = QuestManager.new()
-			quest_manager.set_meta(&"id", quest_manager_id) # store the remote Object instance id as a meta value -- we'll need it to clear the memory of the Tree later on
 			quest_manager_tree_item.set_metadata(column, quest_manager)
 			return true
 
@@ -162,10 +162,6 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			return true
 	push_warning("QuestManagerViewer: This should not happen. Unmanaged capture: %s %s" % [p_message, p_data])
 	return false
-
-
-func __generate_meta_key(p_id : int) -> StringName:
-	return StringName("_" + String.num_uint64(p_id))
 # ==== EDITOR DEBUGGER PLUGIN PASSTHROUGH FUNCTIONS ENDS ======
 
 
@@ -173,6 +169,7 @@ func __generate_meta_key(p_id : int) -> StringName:
 func __on_session_started() -> void:
 	# Clear all the caches
 	_m_remote_quest_manager_id_to_tree_item_map_cache.clear()
+	_m_quest_id_to_tree_item_map_cache.clear()
 
 	# Clear the quest manager tree
 	quest_manager_viewer_manager_selection_tree_.clear()
@@ -266,17 +263,15 @@ func __refresh_quest_entries() -> void:
 
 	# Clear the quest selection tree as well
 	var selected_quest_id : int = -1 # -1 is used as a sentinel value -- quest IDs begin at 0
-	if quest_manager_viewer_quest_entries_tree_.has_meta(&"quest_id_to_tree_item_map"):
+	if not _m_quest_id_to_tree_item_map_cache.is_empty():
 		var quest_entry_selected_tree_item : TreeItem = quest_manager_viewer_quest_entries_tree_.get_selected()
 		if is_instance_valid(quest_entry_selected_tree_item):
-			var previous_quest_id_to_tree_item_map : Array = quest_manager_viewer_quest_entries_tree_.get_meta(&"quest_id_to_tree_item_map")
-			selected_quest_id = previous_quest_id_to_tree_item_map.find(quest_entry_selected_tree_item)
+			selected_quest_id = _m_quest_id_to_tree_item_map_cache.find(quest_entry_selected_tree_item)
 	quest_manager_viewer_quest_entries_tree_.clear()
 	var _root : TreeItem = quest_manager_viewer_quest_entries_tree_.create_item()
 
 	# Traverse all the top level quests and add them to the tree:
-	var quest_id_to_tree_item_map : Array = []
-	var _new_size : int = quest_id_to_tree_item_map.resize(quest_manager.size())
+	var _new_size : int = _m_quest_id_to_tree_item_map_cache.resize(quest_manager.size())
 	for topmost_quest_id : int in quest_manager.size():
 		var quest_entry : QuestEntry = quest_manager.get_quest(topmost_quest_id)
 		if not quest_entry.has_parent():
@@ -300,7 +295,7 @@ func __refresh_quest_entries() -> void:
 				else:
 					# The parent has been previously installed due to how the quest IDs are defined (they start at 0 and increment from there, and parent quests always appear before their children) -- fetch the associated TreeItem
 					var parent_id : int = quest.get_parent().get_id()
-					var parent_tree_item : TreeItem = quest_manager_viewer_quest_entries_tree_.get_meta(__generate_meta_key(parent_id))
+					var parent_tree_item : TreeItem = _m_quest_id_to_tree_item_map_cache[parent_id]
 					quest_tree_item = quest_manager_viewer_quest_entries_tree_.create_item(parent_tree_item)
 
 				# Install the quest tooltip:
@@ -326,17 +321,13 @@ func __refresh_quest_entries() -> void:
 				var quest_tree_item_metadata : Array = [quest_manager, quest_id]
 				quest_tree_item.set_metadata(column, quest_tree_item_metadata)
 
-				# Add the quest ID as a meta value so that we can find the quest IDs who are parents later
-				quest_manager_viewer_quest_entries_tree_.set_meta(__generate_meta_key(quest_id), quest_tree_item)
-
-				# Also map the quest id to their tree items - we need to to refresh the quest data view if needed
-				quest_id_to_tree_item_map[quest_id] = quest_tree_item
+				# Also map the quest id to their tree items - we need this to figure out the TreeItems parent/child relationships
+				_m_quest_id_to_tree_item_map_cache[quest_id] = quest_tree_item
 
 	# Store the quest_id_to_tree_item_map -- this will be needed the next time we refresh the quest entries
-	quest_manager_viewer_quest_entries_tree_.set_meta(&"quest_id_to_tree_item_map", quest_id_to_tree_item_map)
 	if selected_quest_id >= 0:
-		if quest_id_to_tree_item_map.has(selected_quest_id):
-			var tree_item_to_select : TreeItem = quest_id_to_tree_item_map[selected_quest_id]
+		if _m_quest_id_to_tree_item_map_cache.has(selected_quest_id):
+			var tree_item_to_select : TreeItem = _m_quest_id_to_tree_item_map_cache[selected_quest_id]
 			tree_item_to_select.select(column)
 		else:
 			__on_quest_view_selection_nothing_selected()
