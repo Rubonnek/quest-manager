@@ -14,6 +14,7 @@ var _m_original_quest_entry_view_warning_text : String
 var _m_original_quest_data_view_warning_text : String
 var _m_original_quest_metadata_view_warning_text : String
 
+var _m_remote_quest_manager_id_to_tree_item_map_cache : Dictionary
 
 func _ready() -> void:
 	# Connect QuestManager tree signals
@@ -56,8 +57,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			# Create the associated tree_item and add it as metadata against the tree itself so that we can extract it easily when we receive messages from this specific QuestManager instance id
 			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.create_item()
 			quest_manager_tree_item.set_text(column, target_name)
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			quest_manager_viewer_manager_selection_tree_.set_meta(meta_key, quest_manager_tree_item)
+			_m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id] = quest_manager_tree_item
 
 			# Store a local QuestManager as metadata -- reuse one if provided.
 			var quest_manager : QuestManager = QuestManager.new()
@@ -67,16 +67,14 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"quest_manager:set_name":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var remote_name : String = p_data[1]
 			quest_manager_tree_item.set_text(column, remote_name)
 			return true
 
 		"quest_manager:sync_entry":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 
 			# Inject the remote quest entry data:
@@ -90,8 +88,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"quest_manager:sync_why_cant_be_accepted":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 			var remote_quest_entry_id : int = p_data[1]
 			var remote_reasons : Array = p_data[2]
@@ -106,8 +103,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"quest_manager:sync_why_cant_be_rejected":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 			var remote_quest_entry_id : int = p_data[1]
 			var remote_reasons : Array = p_data[2]
@@ -122,8 +118,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"quest_manager:sync_why_cant_be_completed":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 			var remote_quest_entry_id : int = p_data[1]
 			var remote_reasons : Array = p_data[2]
@@ -138,8 +133,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"quest_manager:sync_why_cant_be_failed":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 			var remote_quest_entry_id : int = p_data[1]
 			var remote_reasons : Array = p_data[2]
@@ -154,8 +148,7 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 
 		"quest_manager:sync_why_cant_be_canceled":
 			var quest_manager_id : int = p_data[0]
-			var meta_key : StringName = __generate_meta_key(quest_manager_id)
-			var quest_manager_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_meta(meta_key)
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
 			var stored_quest_manager : QuestManager = quest_manager_tree_item.get_metadata(column)
 			var remote_quest_entry_id : int = p_data[1]
 			var remote_reasons : Array = p_data[2]
@@ -178,14 +171,8 @@ func __generate_meta_key(p_id : int) -> StringName:
 
 # ===== VISUALIZATION FUNCTIONS BEGIN ====
 func __on_session_started() -> void:
-	# Clear all the metadata from the quest manager selection tree to avoid leaking memory when a new session start:
-	#var column : int = 0
-	#var root : TreeItem = quest_manager_viewer_manager_selection_tree_.get_root()
-	#for child : TreeItem in root.get_children():
-	#	var quest_manager : QuestManager = child.get_metadata(column)
-	#	var quest_manager_id : int = quest_manager.get_meta(&"id")
-	#	var meta_key : StringName = __generate_meta_key(quest_manager_id)
-	#	quest_manager_viewer_manager_selection_tree_.remove_meta(meta_key)
+	# Clear all the caches
+	_m_remote_quest_manager_id_to_tree_item_map_cache.clear()
 
 	# Clear the quest manager tree
 	quest_manager_viewer_manager_selection_tree_.clear()
