@@ -392,7 +392,7 @@ func __on_quest_view_selection_item_selected() -> void:
 		data_view += "Can Be Rejected: %s\n" % str(not_rejected_reasons.is_empty())
 		var rejection_conditions : Array = quest.get_rejection_conditions()
 		if not rejection_conditions.is_empty():
-			data_view += "Acceptance Conditions: %s\n" % JSON.stringify(rejection_conditions, "\t").strip_edges(true,true)
+			data_view += "Rejection Conditions: %s\n" % JSON.stringify(rejection_conditions, "\t").strip_edges(true,true)
 		if not not_rejected_reasons.is_empty():
 			data_view += "Why can't be rejected?: %s\n" % JSON.stringify(not_rejected_reasons, "\t").strip_edges(true,true)
 		data_view += "\n"
