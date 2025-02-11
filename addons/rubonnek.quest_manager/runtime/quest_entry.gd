@@ -98,7 +98,7 @@ func add_subquest(p_title : String = "", p_description : String = "") -> QuestEn
 		_m_quest_entry_dictionary[_key.SUBQUESTS_IDS] = subquests_ids
 
 	var subquest_id : int = __get_manager().size() - 1
-	var subquest : QuestEntry = QuestEntry.new(subquest_id, _m_quest_manager_weakref, subquest_dictionary)
+	var subquest : QuestEntry = QuestEntry.new(subquest_id, __get_manager(), subquest_dictionary)
 	__get_manager()._m_quest_entries.push_back(subquest)
 	subquests_ids.push_back(subquest.get_id())
 
@@ -819,10 +819,10 @@ func clear_conditions() -> void:
 func __get_manager() -> QuestManager:
 	return _m_quest_manager_weakref.get_ref()
 
-func _init(p_quest_entry_dictionary_id : int, p_quest_manager_weakref : WeakRef, p_quest_entry_dictionary : Dictionary = {}, p_title : String = "", p_description : String = "") -> void:
+func _init(p_quest_entry_dictionary_id : int, p_quest_manager : QuestManager, p_quest_entry_dictionary : Dictionary = {}, p_title : String = "", p_description : String = "") -> void:
 	_m_quest_entry_dictionary_id  = p_quest_entry_dictionary_id
 	_m_quest_entry_dictionary = p_quest_entry_dictionary
-	_m_quest_manager_weakref = p_quest_manager_weakref
+	_m_quest_manager_weakref = weakref(p_quest_manager)
 	if not p_title.is_empty():
 		_m_quest_entry_dictionary[_key.TITLE] = p_title
 	if not p_description.is_empty():
