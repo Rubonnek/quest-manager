@@ -85,7 +85,7 @@ enum _key {
 func add_subquest(p_title : String = "", p_description : String = "") -> QuestEntry:
 	# Initialize subquest dictionary:
 	var subquest_dictionary : Dictionary = {}
-	__get_manager()._m_quest_dictionaries.push_back(subquest_dictionary)
+	get_manager()._m_quest_dictionaries.push_back(subquest_dictionary)
 	subquest_dictionary[_key.PARENT_QUEST_ID] = get_id()
 	if not p_title.is_empty():
 		subquest_dictionary[_key.TITLE] = p_title
@@ -97,9 +97,9 @@ func add_subquest(p_title : String = "", p_description : String = "") -> QuestEn
 	if not _m_quest_entry_dictionary.has(_key.SUBQUESTS_IDS):
 		_m_quest_entry_dictionary[_key.SUBQUESTS_IDS] = subquests_ids
 
-	var subquest_id : int = __get_manager().size() - 1
-	var subquest : QuestEntry = QuestEntry.new(subquest_id, __get_manager(), subquest_dictionary)
-	__get_manager()._m_quest_entries.push_back(subquest)
+	var subquest_id : int = get_manager().size() - 1
+	var subquest : QuestEntry = QuestEntry.new(subquest_id, get_manager(), subquest_dictionary)
+	get_manager()._m_quest_entries.push_back(subquest)
 	subquests_ids.push_back(subquest.get_id())
 
 	# Send both entries to the EngineDebugger
@@ -113,7 +113,7 @@ func get_subquest(p_subquest_id : int) -> QuestEntry:
 	assert(has_subquests(), "QuestEntry: Entry has no subquest.")
 	var subquests_ids : Dictionary = _m_quest_entry_dictionary.get(_key.SUBQUESTS_IDS, {})
 	assert(subquests_ids.has(p_subquest_id), "QuestEntry: Subquest ID is not present. Subquest was never added.")
-	return __get_manager().get_quest(p_subquest_id)
+	return get_manager().get_quest(p_subquest_id)
 
 
 ## Returns true if the quest has any subquests.
@@ -141,7 +141,7 @@ func are_subquests_completed() -> bool:
 	var quest_id_stack : Array = get_subquests_ids()
 	while not quest_id_stack.is_empty():
 		var quest_id : int = quest_id_stack.pop_back()
-		var quest : QuestEntry = __get_manager().get_quest(quest_id)
+		var quest : QuestEntry = get_manager().get_quest(quest_id)
 		if not quest.is_completed():
 			return false
 		if quest.has_subquests():
@@ -157,7 +157,7 @@ func are_subquests_failed() -> bool:
 	var quest_id_stack : Array = get_subquests_ids()
 	while not quest_id_stack.is_empty():
 		var quest_id : int = quest_id_stack.pop_back()
-		var quest : QuestEntry = __get_manager().get_quest(quest_id)
+		var quest : QuestEntry = get_manager().get_quest(quest_id)
 		if not quest.is_failed():
 			return false
 		if quest.has_subquests():
@@ -173,7 +173,7 @@ func are_subquests_accepted() -> bool:
 	var quest_id_stack : Array = get_subquests_ids()
 	while not quest_id_stack.is_empty():
 		var quest_id : int = quest_id_stack.pop_back()
-		var quest : QuestEntry = __get_manager().get_quest(quest_id)
+		var quest : QuestEntry = get_manager().get_quest(quest_id)
 		if not quest.is_accepted():
 			return false
 		if quest.has_subquests():
@@ -189,7 +189,7 @@ func are_subquests_rejected() -> bool:
 	var quest_id_stack : Array = get_subquests_ids()
 	while not quest_id_stack.is_empty():
 		var quest_id : int = quest_id_stack.pop_back()
-		var quest : QuestEntry = __get_manager().get_quest(quest_id)
+		var quest : QuestEntry = get_manager().get_quest(quest_id)
 		if not quest.is_rejected():
 			return false
 		if quest.has_subquests():
@@ -205,7 +205,7 @@ func are_subquests_canceled() -> bool:
 	var quest_id_stack : Array = get_subquests_ids()
 	while not quest_id_stack.is_empty():
 		var quest_id : int = quest_id_stack.pop_back()
-		var quest : QuestEntry = __get_manager().get_quest(quest_id)
+		var quest : QuestEntry = get_manager().get_quest(quest_id)
 		if not quest.is_canceled():
 			return false
 		if quest.has_subquests():
@@ -647,7 +647,7 @@ func has_parent() -> bool:
 func get_parent() -> QuestEntry:
 	if has_parent():
 		var parent_id : int = _m_quest_entry_dictionary.get(_key.PARENT_QUEST_ID)
-		return __get_manager().get_quest(parent_id)
+		return get_manager().get_quest(parent_id)
 	else:
 		return null
 
@@ -727,7 +727,7 @@ func prettify() -> Dictionary:
 	while not quest_id_stack.is_empty():
 		# Process loop variable:
 		var quest_id : int = quest_id_stack.pop_back()
-		var quest : QuestEntry = __get_manager().get_quest(quest_id)
+		var quest : QuestEntry = get_manager().get_quest(quest_id)
 		if quest.has_subquests():
 			quest_id_stack.append_array(quest.get_subquests_ids())
 
@@ -744,7 +744,7 @@ func prettify() -> Dictionary:
 		for subquest_id_index : int in modified_subquest_ids_array.size():
 			# Since each quest ID is unique, it's necessary to always duplicate the source data:
 			var subquest_id : int = modified_subquest_ids_array[subquest_id_index]
-			var source_subquest_data : Dictionary = __get_manager().get_data()[subquest_id]
+			var source_subquest_data : Dictionary = get_manager().get_data()[subquest_id]
 			var subquest_data : Dictionary = source_subquest_data.duplicate(true)
 
 			# Track it the dictionary in case it has more subquests
@@ -762,7 +762,7 @@ func prettify() -> Dictionary:
 
 func __sync_runtime_data_with_debugger(p_message : String, p_reasons : Array[String]) -> void:
 	if EngineDebugger.is_active():
-		var quest_manager_id : int = __get_manager().get_instance_id()
+		var quest_manager_id : int = get_manager().get_instance_id()
 		EngineDebugger.send_message(p_message, [quest_manager_id, _m_quest_entry_dictionary_id, p_reasons])
 
 
@@ -798,7 +798,7 @@ func __send_entry_to_manager_viewer() -> void:
 			# Replaced the source metadata with the stringified version that can be displayed remotely:
 			duplicated_quest_entry_data[_key.METADATA] = stringified_metadata
 
-		var quest_manager_id : int = __get_manager().get_instance_id()
+		var quest_manager_id : int = get_manager().get_instance_id()
 		EngineDebugger.send_message("quest_manager:sync_entry", [quest_manager_id, _m_quest_entry_dictionary_id, duplicated_quest_entry_data])
 
 
@@ -816,8 +816,11 @@ func clear_conditions() -> void:
 	_success = _m_quest_entry_dictionary.erase(_key.CANCELATION_CONDITIONS)
 	__send_entry_to_manager_viewer()
 
-func __get_manager() -> QuestManager:
+
+## Returns the QuestManager instance associated with the quest entry.
+func get_manager() -> QuestManager:
 	return _m_quest_manager_weakref.get_ref()
+
 
 func _init(p_quest_entry_dictionary_id : int, p_quest_manager : QuestManager, p_quest_entry_dictionary : Dictionary = {}, p_title : String = "", p_description : String = "") -> void:
 	_m_quest_entry_dictionary_id  = p_quest_entry_dictionary_id
