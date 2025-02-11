@@ -5,7 +5,7 @@
 #                            QUEST MANAGER                                  |
 #           https://github.com/Rubonnek/quest-manager                       |
 #============================================================================
-# Copyright (c) 2024-2025 Wilson Enrique Alvarez Torres                          |
+# Copyright (c) 2024-2025 Wilson Enrique Alvarez Torres                     |
 #                                                                           |
 # Permission is hereby granted, free of charge, to any person obtaining     |
 # a copy of this software and associated documentation files (the           |
@@ -817,7 +817,7 @@ func clear_conditions() -> void:
 	__send_entry_to_manager_viewer()
 
 
-## Returns the QuestManager instance associated with the quest entry.
+## Returns the [QuestManager] instance associated with the quest entry.
 func get_manager() -> QuestManager:
 	return _m_quest_manager_weakref.get_ref()
 
