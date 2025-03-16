@@ -7,8 +7,8 @@ A minimalistic quest manager for the Godot Game Engine.
 ## :star: Features
 
 - :evergreen_tree: Create quest trees with ease in GDScript
-- :art: Use built-in serialization to save/load the progress
-- :hammer_and_wrench: Quest viewer included to track/debug quests at runtime with ease
+- :art: Easy to customize -- bring your own GUI nodes
+- :hammer_and_wrench: Quest viewer included for tracking/debugging quests at runtime with ease
 
 ## :zap: Requirements
 
