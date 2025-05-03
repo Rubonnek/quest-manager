@@ -170,6 +170,12 @@ func get_name() -> String:
 	return get_meta(&"name", "")
 
 
+## Deregisters the quest manager from the debugger.
+func deregister() -> void:
+	if EngineDebugger.is_active():
+		EngineDebugger.send_message("quest_manager:deregister_manager", [get_instance_id()])
+
+
 # ==== ITERATOR ====
 # Iterates over the topmost quest entries only
 var _m_iter_needle : int = 0

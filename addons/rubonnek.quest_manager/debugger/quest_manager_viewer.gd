@@ -189,6 +189,18 @@ func on_editor_debugger_plugin_capture(p_message : String, p_data : Array) -> bo
 			# Refresh the quest entries if needed:
 			__refresh_quest_entries_if_needed(stored_quest_manager)
 			return true
+
+		"quest_manager:deregister_manager":
+			var quest_manager_id : int = p_data[0]
+			var quest_manager_tree_item : TreeItem = _m_remote_quest_manager_id_to_tree_item_map_cache[quest_manager_id]
+			var selected_tree_item : TreeItem = quest_manager_viewer_manager_selection_tree_.get_selected()
+			if is_instance_valid(selected_tree_item):
+				if quest_manager_tree_item == selected_tree_item:
+					__on_quest_manager_selection_tree_nothing_selected()
+			var _success : bool = _m_remote_quest_manager_id_to_tree_item_map_cache.erase(quest_manager_id)
+			quest_manager_tree_item.free()
+			return true
+
 	push_warning("QuestManagerViewer: This should not happen. Unmanaged capture: %s %s" % [p_message, p_data])
 	return false
 # ==== EDITOR DEBUGGER PLUGIN PASSTHROUGH FUNCTIONS ENDS ======
