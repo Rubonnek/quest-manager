@@ -214,6 +214,10 @@ func __inject(p_quest_id : int, p_quest_dictionary : Dictionary) -> void:
 	_m_quest_entries[p_quest_id] = quest_entry
 
 
+func _to_string() -> String:
+	return "<QuestManager#%d>" % get_instance_id()
+
+
 func _init() -> void:
 	if EngineDebugger.is_active():
 		# Register with the debugger

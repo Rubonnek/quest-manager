@@ -822,6 +822,10 @@ func get_manager() -> QuestManager:
 	return _m_quest_manager_weakref.get_ref()
 
 
+func _to_string() -> String:
+	return "<QuestEntry#%d>" % get_instance_id()
+
+
 func _init(p_quest_entry_dictionary_id : int, p_quest_manager : QuestManager, p_quest_entry_dictionary : Dictionary = {}, p_title : String = "", p_description : String = "") -> void:
 	_m_quest_entry_dictionary_id  = p_quest_entry_dictionary_id
 	_m_quest_entry_dictionary = p_quest_entry_dictionary
