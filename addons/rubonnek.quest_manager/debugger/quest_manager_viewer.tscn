@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1rpq82pmvhum"]
+[gd_scene load_steps=3 format=3 uid="uid://c1rpq82pmvhum"]
 
 [ext_resource type="Script" path="res://addons/rubonnek.quest_manager/debugger/quest_manager_viewer.gd" id="1_tvtkg"]
+[ext_resource type="StyleBox" uid="uid://cmdk4c3c80kio" path="res://addons/rubonnek.quest_manager/debugger/tree_panel_style_box_flat.tres" id="2_1mfnm"]
 
 [node name="QuestManager" type="PanelContainer" node_paths=PackedStringArray("quest_manager_viewer_manager_selection_line_edit_", "quest_manager_viewer_manager_selection_tree_", "quest_manager_viewer_quest_entries_tree_", "quest_manager_viewer_quest_entries_view_warning_label_", "quest_manager_viewer_quest_data_view_text_edit_", "quest_manager_viewer_quest_data_view_warning_label_", "quest_manager_viewer_quest_metadata_view_text_edit_", "quest_manager_viewer_quest_metadata_view_warning_label_")]
 custom_minimum_size = Vector2(0, 240)
@@ -34,6 +35,7 @@ placeholder_text = "Filter Managers"
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("2_1mfnm")
 hide_root = true
 
 [node name="QuestManagerViewerHSplitContainer" type="HSplitContainer" parent="QuestManagerViewerHSplitContainer"]
@@ -51,6 +53,7 @@ horizontal_alignment = 1
 [node name="QuestManagerViewerQuestEntriesTree" type="Tree" parent="QuestManagerViewerHSplitContainer/QuestManagerViewerHSplitContainer/QuestManagerViewerQuestEntriesVBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("2_1mfnm")
 hide_root = true
 
 [node name="QuestManagerViewerQuestEntriesViewWarningLabel" type="Label" parent="QuestManagerViewerHSplitContainer/QuestManagerViewerHSplitContainer/QuestManagerViewerQuestEntriesVBoxContainer/QuestManagerViewerQuestEntriesTree"]
@@ -67,6 +70,7 @@ vertical_alignment = 1
 [node name="QuestManagerViewerQuestEntriesViewTabContainer" type="TabContainer" parent="QuestManagerViewerHSplitContainer/QuestManagerViewerHSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/panel = ExtResource("2_1mfnm")
 
 [node name="Quest Data" type="VBoxContainer" parent="QuestManagerViewerHSplitContainer/QuestManagerViewerHSplitContainer/QuestManagerViewerQuestEntriesViewTabContainer"]
 layout_mode = 2
@@ -75,6 +79,7 @@ size_flags_horizontal = 3
 [node name="QuestManagerViewerQuestDataViewTextEditLabel" type="TextEdit" parent="QuestManagerViewerHSplitContainer/QuestManagerViewerHSplitContainer/QuestManagerViewerQuestEntriesViewTabContainer/Quest Data"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/background_color = Color(0.121569, 0.121569, 0.121569, 1)
 editable = false
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
@@ -99,6 +104,7 @@ layout_mode = 2
 [node name="QuestManagerViewerMetadataViewTextEditLabel" type="TextEdit" parent="QuestManagerViewerHSplitContainer/QuestManagerViewerHSplitContainer/QuestManagerViewerQuestEntriesViewTabContainer/Quest Metadata"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_colors/background_color = Color(0.121569, 0.121569, 0.121569, 1)
 editable = false
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
