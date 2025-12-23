@@ -162,7 +162,8 @@ func set_name(p_name : String) -> void:
 	if OS.is_debug_build():
 		set_meta(&"name", p_name)
 	if EngineDebugger.is_active():
-		EngineDebugger.send_message("quest_manager:set_name", [get_instance_id(), p_name])
+		if not has_meta(&"deregistered"):
+			EngineDebugger.send_message("quest_manager:set_name", [get_instance_id(), p_name])
 
 
 ## Gets the name of the manager. Returns an empty string in release buidls. The manager name is only used for display by the quest manager viewer in the debugger.
@@ -173,6 +174,7 @@ func get_name() -> String:
 ## Deregisters the quest manager from the debugger.
 func deregister() -> void:
 	if EngineDebugger.is_active():
+		set_meta(&"deregistered", true)
 		EngineDebugger.send_message("quest_manager:deregister_manager", [get_instance_id()])
 
 

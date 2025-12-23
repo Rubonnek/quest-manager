@@ -762,12 +762,18 @@ func prettify() -> Dictionary:
 
 func __sync_runtime_data_with_debugger(p_message : String, p_reasons : Array[String]) -> void:
 	if EngineDebugger.is_active():
-		var quest_manager_id : int = get_manager().get_instance_id()
-		EngineDebugger.send_message(p_message, [quest_manager_id, _m_quest_entry_dictionary_id, p_reasons])
+		var quest_manager : QuestManager = get_manager()
+		if not quest_manager.has_meta(&"deregistered"):
+			var quest_manager_id : int = get_manager().get_instance_id()
+			EngineDebugger.send_message(p_message, [quest_manager_id, _m_quest_entry_dictionary_id, p_reasons])
 
 
 func __send_entry_to_manager_viewer() -> void:
 	if EngineDebugger.is_active():
+		var quest_manager : QuestManager = get_manager()
+		if quest_manager.has_meta(&"deregistered"):
+			return
+
 		# NOTE: Do not use the quest_entry API directly here when setting values to avoid sending unnecessary data to the debugger about the duplicated quest entry being sent to display
 
 		# The debugger viewer requires certain objects to be stringified before sending -- duplicate the QuestEntry data to avoid overriding the runtime data:
@@ -798,7 +804,7 @@ func __send_entry_to_manager_viewer() -> void:
 			# Replaced the source metadata with the stringified version that can be displayed remotely:
 			duplicated_quest_entry_data[_key.METADATA] = stringified_metadata
 
-		var quest_manager_id : int = get_manager().get_instance_id()
+		var quest_manager_id : int = quest_manager.get_instance_id()
 		EngineDebugger.send_message("quest_manager:sync_entry", [quest_manager_id, _m_quest_entry_dictionary_id, duplicated_quest_entry_data])
 
 
