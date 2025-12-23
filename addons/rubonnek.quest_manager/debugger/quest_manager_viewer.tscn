@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/rubonnek.quest_manager/debugger/quest_manager_viewer.gd" id="1_tvtkg"]
 [ext_resource type="StyleBox" uid="uid://cmdk4c3c80kio" path="res://addons/rubonnek.quest_manager/debugger/tree_panel_style_box_flat.tres" id="2_1mfnm"]
 
-[node name="QuestManager" type="PanelContainer" node_paths=PackedStringArray("quest_manager_viewer_manager_selection_line_edit_", "quest_manager_viewer_manager_selection_tree_", "quest_manager_viewer_quest_entries_tree_", "quest_manager_viewer_quest_entries_view_warning_label_", "quest_manager_viewer_quest_data_view_text_edit_", "quest_manager_viewer_quest_data_view_warning_label_", "quest_manager_viewer_quest_metadata_view_text_edit_", "quest_manager_viewer_quest_metadata_view_warning_label_")]
+[node name="Quest Manager" type="PanelContainer" node_paths=PackedStringArray("quest_manager_viewer_manager_selection_line_edit_", "quest_manager_viewer_manager_selection_tree_", "quest_manager_viewer_quest_entries_tree_", "quest_manager_viewer_quest_entries_view_warning_label_", "quest_manager_viewer_quest_data_view_text_edit_", "quest_manager_viewer_quest_data_view_warning_label_", "quest_manager_viewer_quest_metadata_view_text_edit_", "quest_manager_viewer_quest_metadata_view_warning_label_")]
 custom_minimum_size = Vector2(0, 240)
 anchors_preset = 15
 anchor_right = 1.0
