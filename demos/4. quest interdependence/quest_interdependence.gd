@@ -1,6 +1,5 @@
 extends Control
 
-@export var quest_manager_viewer_ : Control
 
 func _ready() -> void:
 	var quest_manager : QuestManager = QuestManager.new()
