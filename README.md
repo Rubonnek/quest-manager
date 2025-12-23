@@ -2,6 +2,9 @@
 
 <img src="icon.svg" width="128" height="128">
 
+![GitHub Release](https://img.shields.io/github/v/release/Rubonnek/quest-manager?label=Current%20Release)
+![Github Downloads](https://img.shields.io/github/downloads/Rubonnek/quest-manager/total?logo=github&label=GitHub%20Downloads)
+
 A minimalistic quest manager for the Godot Game Engine.
 
 ## :star: Features
