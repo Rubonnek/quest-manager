@@ -1,9 +1,10 @@
 extends Control
 
-var quest_manager : QuestManager = QuestManager.new()
+var quest_manager: QuestManager = QuestManager.new()
+
 
 func _ready() -> void:
-	var quest : QuestEntry = quest_manager.add_quest("Main Quest", "Main Quest Description")
+	var quest: QuestEntry = quest_manager.add_quest("Main Quest", "Main Quest Description")
 
 	# There's built-in support for several boolean flags:
 

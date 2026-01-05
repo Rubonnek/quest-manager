@@ -1,23 +1,24 @@
 extends Control
 
-var quest_manager : QuestManager = QuestManager.new()
-const save_path : String = "user://quests.cfg"
+var quest_manager: QuestManager = QuestManager.new()
+const save_path: String = "user://quests.cfg"
+
 
 func _ready() -> void:
-	var config_file : ConfigFile = ConfigFile.new()
-	var quest : QuestEntry
+	var config_file: ConfigFile = ConfigFile.new()
+	var quest: QuestEntry
 
 	if not FileAccess.file_exists(save_path):
-		var quest_id : int = quest_manager.add_quest("Increased counter upon creation", "Keep launching this scene to see the counters going up").get_id()
+		var quest_id: int = quest_manager.add_quest("Increased counter upon creation", "Keep launching this scene to see the counters going up").get_id()
 		quest = quest_manager.get_quest(quest_id)
 	else:
-		var _load_success : Error = config_file.load(save_path)
-		var data : Array[Dictionary] = config_file.get_value("quest_manager", "data")
+		var _load_success: Error = config_file.load(save_path)
+		var data: Array[Dictionary] = config_file.get_value("quest_manager", "data")
 		quest_manager.set_data(data)
-		var quest_id : int = config_file.get_value("quest_manager", "first_quest")
+		var quest_id: int = config_file.get_value("quest_manager", "first_quest")
 		quest = quest_manager.get_quest(quest_id)
 
-	var count : int = quest.get_metadata("count", -1)
+	var count: int = quest.get_metadata("count", -1)
 	count += 1
 	quest.set_metadata("count", count)
 	print("Count: ", count)
@@ -28,5 +29,5 @@ func _ready() -> void:
 
 	# WARNING: On an actual project you might want to clear the quest conditions before saving the quest to disk and reinstall those conditions at runtime after loading the data from disk.
 	# quest_manager.clear_conditions() can also be called to clear the conditions of all the quests before saving its data.
-	config_file.set_value("quest_manager","data", quest_manager.get_data())
-	var _save_success : Error = config_file.save(save_path)
+	config_file.set_value("quest_manager", "data", quest_manager.get_data())
+	var _save_success: Error = config_file.save(save_path)
