@@ -64,7 +64,7 @@ func get_quest(p_quest_id: int) -> QuestEntry:
 
 ## Returns true if a quest ID is present.
 func has_quest(p_quest_id: int) -> bool:
-	return p_quest_id < _m_quest_dictionaries.size()
+	return p_quest_id >= 0 and p_quest_id < _m_quest_dictionaries.size()
 
 
 ## Returns the number of quest entries.
