@@ -103,7 +103,7 @@ func add_subquest(p_title: String = "", p_description: String = "") -> QuestEntr
 ## Returns the subquest.
 func get_subquest(p_subquest_id: int) -> QuestEntry:
 	assert(has_subquests(), "QuestEntry: Entry has no subquest.")
-	var subquests_ids: Dictionary = _m_quest_entry_dictionary.get(_key.SUBQUESTS_IDS, { })
+	var subquests_ids: Array = _m_quest_entry_dictionary.get(_key.SUBQUESTS_IDS, [])
 	assert(subquests_ids.has(p_subquest_id), "QuestEntry: Subquest ID is not present. Subquest was never added.")
 	return get_manager().get_quest(p_subquest_id)
 
