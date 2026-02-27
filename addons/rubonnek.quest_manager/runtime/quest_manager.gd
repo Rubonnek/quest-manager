@@ -93,10 +93,16 @@ func append(p_quest_manager: QuestManager) -> void:
 	var id_offset: int = _m_quest_dictionaries.size()
 	_m_quest_dictionaries.append_array(p_quest_manager.get_data().duplicate(true))
 	for index: int in range(id_offset, _m_quest_dictionaries.size()):
-		# Update the ID on each of the appended quest entries
-		var quest_entry: QuestEntry = get_quest(index)
-		if quest_entry.has_parent():
-			quest_entry.__set_parent(id_offset)
+		# Create the quest entries and add them to the cache
+		var quest_dictionary: Dictionary = _m_quest_dictionaries[index]
+		var quest_entry: QuestEntry = QuestEntry.new(index, self, quest_dictionary)
+		_m_quest_entries.push_back(quest_entry)
+
+		# Update the parent ID on each of the appended quest entries
+		if quest_dictionary.has(QuestEntry._key.PARENT_QUEST_ID):
+			var original_parent_id: int = quest_dictionary[QuestEntry._key.PARENT_QUEST_ID]
+			quest_dictionary[QuestEntry._key.PARENT_QUEST_ID] = original_parent_id + id_offset
+
 		if quest_entry.has_subquests():
 			var internal_subquest_array: Array = quest_entry.__get_subquests_ids()
 			for subquest_id_index: int in internal_subquest_array.size():
