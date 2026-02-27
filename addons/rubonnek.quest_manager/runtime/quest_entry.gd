@@ -279,9 +279,10 @@ func can_be_completed() -> bool:
 # Sends an array of the completion conditions that returned false to the debugger. Only executed when can_be_completed is called and EngineDebugger is active.
 func __sync_why_cant_be_completed_with_debugger() -> void:
 	if EngineDebugger.is_active():
-		var reasons: Array[String] = []
 		if not _m_quest_entry_dictionary.has(_key.COMPLETION_CONDITIONS):
-			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_completed", reasons)
+			# There's nothing to synchronize
+			return
+		var reasons: Array[String] = []
 		var completion_conditions_array: Array = _m_quest_entry_dictionary.get(_key.COMPLETION_CONDITIONS, [])
 		for condition: Callable in completion_conditions_array:
 			if not condition.is_valid():
@@ -353,9 +354,10 @@ func can_be_failed() -> bool:
 # Sends an array of the failure conditions that returned false to the debugger. Only executed when can_be_failed is called and EngineDebugger is active.
 func __sync_why_cant_be_failed_with_debugger() -> void:
 	if EngineDebugger.is_active():
-		var reasons: Array[String] = []
 		if not _m_quest_entry_dictionary.has(_key.FAILURE_CONDITIONS):
-			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_failed", reasons)
+			# There's nothing to synchronize
+			return
+		var reasons: Array[String] = []
 		var failure_conditions_array: Array = _m_quest_entry_dictionary.get(_key.FAILURE_CONDITIONS, [])
 		for condition: Callable in failure_conditions_array:
 			if not condition.is_valid():
@@ -427,9 +429,10 @@ func can_be_canceled() -> bool:
 # Sends an array of the cancelation conditions that returned false to the debugger. Only executed when can_be_canceled is called and EngineDebugger is active.
 func __sync_why_cant_be_canceled_with_debugger() -> void:
 	if EngineDebugger.is_active():
-		var reasons: Array[String] = []
 		if not _m_quest_entry_dictionary.has(_key.CANCELATION_CONDITIONS):
-			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_canceled", reasons)
+			# There's nothing to synchronize
+			return
+		var reasons: Array[String] = []
 		var cancelation_conditions_array: Array = _m_quest_entry_dictionary.get(_key.CANCELATION_CONDITIONS, [])
 		for condition: Callable in cancelation_conditions_array:
 			if not condition.is_valid():
@@ -501,10 +504,10 @@ func can_be_accepted() -> bool:
 # Sends an array of the acceptance conditions that returned false to the debugger. Only executed when can_be_accepted is called and EngineDebugger is active.
 func __sync_why_cant_be_accepted_with_debugger() -> void:
 	if EngineDebugger.is_active():
-		var reasons: Array[String] = []
 		if not _m_quest_entry_dictionary.has(_key.ACCEPTANCE_CONDITIONS):
-			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_accepted", reasons)
+			# There's nothing to synchronize
 			return
+		var reasons: Array[String] = []
 		var acceptance_conditions_array: Array = _m_quest_entry_dictionary.get(_key.ACCEPTANCE_CONDITIONS, [])
 		for condition: Callable in acceptance_conditions_array:
 			if not condition.is_valid():
@@ -576,10 +579,10 @@ func can_be_rejected() -> bool:
 # Sends an array of the rejection conditions that returned false to the debugger. Only executed when can_be_rejected is called and EngineDebugger is active.
 func __sync_why_cant_be_rejected_with_debugger() -> void:
 	if EngineDebugger.is_active():
-		var reasons: Array[String] = []
 		if not _m_quest_entry_dictionary.has(_key.REJECTION_CONDITIONS):
-			__sync_runtime_data_with_debugger("quest_manager:sync_why_cant_be_rejected", reasons)
+			# There's nothing to synchronize
 			return
+		var reasons: Array[String] = []
 		var rejection_conditions_array: Array = _m_quest_entry_dictionary.get(_key.REJECTION_CONDITIONS, [])
 		for condition: Callable in rejection_conditions_array:
 			if not condition.is_valid():
