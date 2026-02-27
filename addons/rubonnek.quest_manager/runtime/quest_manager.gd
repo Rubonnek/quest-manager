@@ -133,6 +133,7 @@ func get_data() -> Array[Dictionary]:
 ## Overwrites the quest manager data.
 func set_data(p_data: Array[Dictionary]) -> void:
 	_m_quest_dictionaries = p_data
+	_m_quest_entries.clear()
 	for quest_id: int in p_data.size():
 		var quest_data: Dictionary = p_data[quest_id]
 		var quest_entry: QuestEntry = QuestEntry.new(quest_id, self, quest_data)
