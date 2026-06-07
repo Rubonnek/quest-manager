@@ -5,7 +5,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/Rubonnek/quest-manager?label=Current%20Release)
 ![Github Downloads](https://img.shields.io/github/downloads/Rubonnek/quest-manager/total?logo=github&label=GitHub%20Downloads)
 
-A powerful and flexible quest management system for the Godot Game Engine, enabling developers to create hierarchical quest trees, track detailed quest states and progress, and integrate custom conditions and metadata for dynamic gameplay experiences.
+A powerful and flexible quest management system for the Godot Game Engine for creating hierarchical quest trees, tracking detailed quest states and progress, and integrate custom conditions and metadata for dynamic gameplay experiences.
 
 ## :star: Features
 
